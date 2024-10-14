@@ -14,13 +14,7 @@ const Topbar = ({ user }: TopbarProps) => {
     <div>
       Topbar, {user?.email}
       <div>
-        <Button
-          onClick={async () => {
-            await logout();
-          }}
-        >
-          Log out
-        </Button>
+        <Button onClick={logout}>Log out</Button>
       </div>
     </div>
   );

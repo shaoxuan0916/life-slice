@@ -2,18 +2,22 @@
 
 import React, { useEffect } from "react";
 import LoginForm from "./form";
+import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/supabase/provider";
 
 const LoginPage = () => {
+  const supabase = createClient();
   const router = useRouter();
-  const { user } = useAuth();
 
   useEffect(() => {
-    if (user?.email_confirmed_at) {
-      router.push("/");
-    }
-  }, [user, router]);
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) router.push("/");
+    };
+    getUser();
+  }, [supabase, router]);
 
   return (
     <div className="bg-background">
