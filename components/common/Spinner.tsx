@@ -1,4 +1,4 @@
-import { twMerge } from "tailwind-merge";
+import { cn } from "@/lib/utils";
 
 export default function Spinner({
   className,
@@ -6,7 +6,7 @@ export default function Spinner({
 }: JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      className={twMerge(" h-5 w-5 animate-spin text-white", className)}
+      className={cn(" h-5 w-5 animate-spin text-white", className)}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"

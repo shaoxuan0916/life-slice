@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
-import ClientLayout from "@/components/layout/ClientLayout";
+import RootProvider from "./provider";
 
 export const metadata: Metadata = {
   title: "Life Slice",
@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ClientLayout>{children}</ClientLayout>
+        <RootProvider>{children}</RootProvider>
       </body>
     </html>
   );
