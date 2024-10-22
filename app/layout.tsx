@@ -19,7 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className="font-dmSans">
         <RootProvider>{children}</RootProvider>
       </body>
     </html>

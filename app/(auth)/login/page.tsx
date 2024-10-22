@@ -1,23 +1,19 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import LoginForm from "./form";
-import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { User } from "@supabase/supabase-js";
+import { getUser } from "@/lib/api/auth";
+import { redirect } from "next/navigation";
 
 const LoginPage = () => {
-  const supabase = createClient();
-  const router = useRouter();
+  const { data: user, isLoading } = useQuery<User | null | undefined>({
+    queryKey: ["users"],
+    queryFn: () => getUser(),
+  });
 
-  useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) router.push("/");
-    };
-    getUser();
-  }, [supabase, router]);
+  if (user && !isLoading) redirect("/journeys");
 
   return (
     <div className="bg-background">

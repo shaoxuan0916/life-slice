@@ -2,10 +2,8 @@
 
 import Link from "next/link";
 import React from "react";
-
 import {
   Headset,
-  HomeIcon,
   LogOutIcon,
   MenuIcon,
   PlusCircleIcon,
@@ -13,11 +11,16 @@ import {
   Settings,
   UserIcon,
 } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { NavLinks } from "./Sidebar";
 import { usePathname, useRouter } from "next/navigation";
 import { logout } from "@/lib/api/auth";
-import { ModeToggle } from "../common/ModeToggle";
+import { ModeToggle } from "../common/mode-toggle";
 import { cn } from "@/lib/utils";
 
 const Topbar = () => {
@@ -29,19 +32,14 @@ const Topbar = () => {
 
   const routes: NavLinks[] = [
     {
-      name: "Home",
-      pathname: "/",
-      icon: <HomeIcon width={20} height={20} />,
+      name: "Journeys",
+      pathname: "/journeys",
+      icon: <RouteIcon width={20} height={20} />,
     },
     {
       name: "Create",
       pathname: "/create",
       icon: <PlusCircleIcon width={20} height={20} />,
-    },
-    {
-      name: "Journeys",
-      pathname: "/journeys",
-      icon: <RouteIcon width={20} height={20} />,
     },
     {
       name: "Profile",
@@ -66,11 +64,9 @@ const Topbar = () => {
         <SheetTrigger>
           <MenuIcon className="text-primary w-6 h-6 cursor-pointer" />
         </SheetTrigger>
-        <SheetContent
-          side="left"
-          className="pt-16 flex flex-col gap-6 w-[220px]"
-        >
+        <SheetContent side="left" className="pt-16 flex flex-col gap-6 w-full">
           <h1 className="pl-2 text-2xl font-bricolage font-bold">LifeSlice</h1>
+          <SheetTitle className="hidden">LifeSlice</SheetTitle>
           {/* Nav Link */}
           <div className="flex-1">
             {routes.map((link) => (

@@ -2,7 +2,6 @@
 
 import { logout } from "@/lib/api/auth";
 import {
-  HomeIcon,
   LogOutIcon,
   Headset,
   Settings,
@@ -14,7 +13,7 @@ import { StaticImageData } from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
-import { ModeToggle } from "../common/ModeToggle";
+import { ModeToggle } from "../common/mode-toggle";
 import { cn } from "@/lib/utils";
 
 export type NavLinks = {
@@ -32,19 +31,14 @@ const Sidebar = () => {
 
   const routes: NavLinks[] = [
     {
-      name: "Home",
-      pathname: "/",
-      icon: <HomeIcon width={20} height={20} />,
+      name: "Journeys",
+      pathname: "/journeys",
+      icon: <RouteIcon width={20} height={20} />,
     },
     {
       name: "Create",
       pathname: "/create",
       icon: <PlusCircleIcon width={20} height={20} />,
-    },
-    {
-      name: "Journeys",
-      pathname: "/journeys",
-      icon: <RouteIcon width={20} height={20} />,
     },
     {
       name: "Profile",

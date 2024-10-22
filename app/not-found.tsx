@@ -94,18 +94,15 @@ export default function Custom404() {
           />
         </svg>
       </div>
-      <p className="text-lg md:text-xl font-semibold">
+      <p className="text-lg md:text-xl font-semibold text-black">
         This page doesn&apos;t exist 😅
       </p>
 
-      <Link
-        href="/"
-        className="flex items-center gap-2 hover:underline hover:underline-offset-1"
-      >
+      <Link href="/" className="flex items-center gap-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
-          fill="currentColor"
+          fill="black"
           className="w-6 h-6"
         >
           <path
@@ -114,7 +111,7 @@ export default function Custom404() {
             clipRule="evenodd"
           />
         </svg>
-        <p className="text-md: md:text-lg">Back to Home</p>
+        <p className="text-md: md:text-lg text-black">Back to Home</p>
       </Link>
     </section>
   );
