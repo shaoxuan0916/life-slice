@@ -22,10 +22,10 @@ import { Textarea } from "@/components/ui/textarea";
 import useUploadImage from "@/hooks/use-upload-image";
 import Spinner from "@/components/common/spinner";
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/lib/supabase/provider";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
+import { createJourney } from "@/lib/api/journey";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "At least 3 characters" }),
@@ -34,7 +34,6 @@ const formSchema = z.object({
 });
 
 export default function CreateJourneyForm() {
-  const supabase = createClient();
   const router = useRouter();
   const { user } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
@@ -61,23 +60,12 @@ export default function CreateJourneyForm() {
   // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const { name, description, coverImgUrl } = values;
-
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("journeys")
-        .insert([
-          {
-            user_id: user?.id,
-            name,
-            description,
-            cover_img_url: coverImgUrl,
-          },
-        ])
-        .select();
+      const userId = user?.id;
+      if (!userId) throw new Error("No logged in user.");
 
-      if (error)
-        throw new Error("An error occured while submitting new journey.");
+      const data = await createJourney(userId, name, description, coverImgUrl);
 
       if (data) {
         toast({

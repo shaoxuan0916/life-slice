@@ -96,6 +96,7 @@ const JourneyPage = ({ params }: RouteParams) => {
       <Timeline
         data={slices}
         title={journey.name}
+        journeyId={journeyId}
         description={journey.description}
       />
     </div>

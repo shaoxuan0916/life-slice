@@ -22,9 +22,10 @@ import { Textarea } from "@/components/ui/textarea";
 import useUploadImage from "@/hooks/use-upload-image";
 import Spinner from "@/components/common/spinner";
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
+import ConfirmModal from "@/components/common/confirm-modal";
+import { deleteJourneyById, editJourneyById } from "@/lib/api/journey";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "At least 3 characters" }),
@@ -37,9 +38,9 @@ interface EditJourneyFormProps {
 }
 
 export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
-  const supabase = createClient();
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const {
     handleFileInputChange,
     loading: uploadingImage,
@@ -67,18 +68,12 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
     const { name, description, coverImgUrl } = values;
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("journeys")
-        .update({
-          name,
-          description,
-          cover_img_url: coverImgUrl,
-        })
-        .eq("id", journey.id)
-        .select();
-
-      if (error)
-        throw new Error("An error occured while submitting new journey.");
+      const data = await editJourneyById(
+        journey.id,
+        name,
+        description,
+        coverImgUrl
+      );
 
       if (data) {
         toast({
@@ -96,9 +91,31 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
   return (
     <div className="flex-1 w-full h-screen max-w-[600px] mx-auto flex md:items-center pt-12 md:pt-0 px-4">
       <div className="w-full">
-        <h3 className="text-3xl font-bold text-primary mb-8 truncate">
-          Edit {journey.name}
-        </h3>
+        <div className="flex items-center justify-between mb-8">
+          <h3 className="text-3xl font-bold text-primary truncate">
+            Edit {journey.name}
+          </h3>
+          <Button
+            variant="destructive"
+            onClick={() => setShowModal(true)}
+            className="hidden md:block"
+          >
+            Delete
+          </Button>
+        </div>
+
+        <ConfirmModal
+          open={showModal}
+          title={`Are you sure you want to delete ${journey.name}?`}
+          variant="destructive"
+          confirmText="Delete"
+          close={() => setShowModal(false)}
+          onConfirm={async () => {
+            await deleteJourneyById(journey.id);
+            toast({ description: "Journey deleted!" });
+            router.push("/journeys");
+          }}
+        />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField

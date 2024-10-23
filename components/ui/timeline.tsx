@@ -3,20 +3,25 @@ import { cn } from "@/lib/utils";
 import { formatDate } from "date-fns";
 import { useScroll, useTransform, motion } from "framer-motion";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
+import { Button } from "./button";
 
 export const Timeline = ({
   data,
   title,
+  journeyId,
   description,
 }: {
   data: Slice[];
   title: string;
+  journeyId: string;
   description?: string;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
     if (ref.current) {
@@ -38,13 +43,22 @@ export const Timeline = ({
       className="w-full h-full bg-white dark:bg-neutral-950 font-sans md:px-10"
       ref={containerRef}
     >
-      <div className="max-w-7xl mx-auto py-8 px-4 md:px-8 lg:px-10">
-        <h2 className="text-lg md:text-4xl mb-4 text-black font-bricolage dark:text-white max-w-4xl">
-          {title}
-        </h2>
-        <p className="text-neutral-700 dark:text-neutral-300 text-sm md:text-base max-w-sm">
-          {description}
-        </p>
+      <div className="max-w-7xl mx-auto py-8 px-4 md:px-8 lg:px-10 flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl md:text-4xl mb-4 text-black font-bricolage dark:text-white max-w-4xl">
+            {title}
+          </h2>
+          <p className="text-neutral-700 dark:text-neutral-300 text-sm md:text-base max-w-sm">
+            {description}
+          </p>
+        </div>
+
+        <Button
+          onClick={() => router.push(`/journeys/${journeyId}/edit`)}
+          className="px-8 hidden md:block"
+        >
+          Edit
+        </Button>
       </div>
 
       {data.length > 0 && (
