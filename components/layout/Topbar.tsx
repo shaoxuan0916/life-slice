@@ -6,7 +6,7 @@ import {
   Headset,
   LogOutIcon,
   MenuIcon,
-  PlusCircleIcon,
+  // PlusCircleIcon,
   RouteIcon,
   Settings,
   UserIcon,
@@ -36,11 +36,11 @@ const Topbar = () => {
       pathname: "/journeys",
       icon: <RouteIcon width={20} height={20} />,
     },
-    {
-      name: "Create",
-      pathname: "/create",
-      icon: <PlusCircleIcon width={20} height={20} />,
-    },
+    // {
+    //   name: "Create",
+    //   pathname: "/create",
+    //   icon: <PlusCircleIcon width={20} height={20} />,
+    // },
     {
       name: "Profile",
       pathname: "/profile",
@@ -102,7 +102,7 @@ const Topbar = () => {
               className="flex items-center gap-2 py-3 w-full text-primary rounded-lg cursor-pointer"
               onClick={async () => {
                 await logout();
-                router.push("/");
+                router.push("/login");
               }}
             >
               <LogOutIcon width={20} height={20} />

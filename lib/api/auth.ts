@@ -73,6 +73,6 @@ export const socialLogin = async (provider: Provider) => {
 
 export const logout = async () => {
   const { error } = await supabase.auth.signOut();
-  window.location.href = "/";
+  window.location.href = "/login";
   if (error) throw new Error("An error occured while signing out.", error);
 };

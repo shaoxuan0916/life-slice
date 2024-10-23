@@ -26,6 +26,7 @@ import { useAuth } from "@/lib/supabase/provider";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { createJourney } from "@/lib/api/journey";
+import { BackButton } from "@/components/common/back-button";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "At least 3 characters" }),
@@ -65,7 +66,7 @@ export default function CreateJourneyForm() {
       const userId = user?.id;
       if (!userId) throw new Error("No logged in user.");
 
-      const data = await createJourney(userId, name, description, coverImgUrl);
+      const data = await createJourney(name, description, coverImgUrl);
 
       if (data) {
         toast({
@@ -83,9 +84,12 @@ export default function CreateJourneyForm() {
   return (
     <div className="flex-1 w-full h-screen max-w-[600px] mx-auto flex md:items-center pt-12 md:pt-0 px-4">
       <div className="w-full">
-        <h3 className="text-3xl font-bold text-primary mb-8">
-          Create a new Journey
-        </h3>
+        <div className="flex items-center gap-4 mb-8">
+          <BackButton />
+          <h3 className="text-2xl md:text-3xl font-bricolage text-primary">
+            Create a new Journey
+          </h3>
+        </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField

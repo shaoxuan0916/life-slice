@@ -14,7 +14,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
   const hideTopbar = pathname.startsWith("/journeys/");
 
   return (
-    <div className="flex flex-col max-w-[1440px] min-h-screen mx-auto">
+    <div className="flex flex-col min-h-screen mx-auto">
       {!hideTopbar && <Topbar />}
 
       <div
@@ -26,7 +26,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
         <div className="hidden md:flex h-full md:sticky md:top-0 md:left-0 z-50">
           <Sidebar />
         </div>
-        <div className="w-full mx-auto md:mt-8 px-4">
+        <div className="w-full max-w-[1440px] mx-auto md:mt-8 px-4">
           {children}
           {showFloatingCreateBtn && (
             <Link

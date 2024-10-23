@@ -36,7 +36,7 @@ export default function ConfirmModal(props: ConfirmModalProps) {
           Hidden Desc
         </AlertDialogDescription>
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-lg leading-snug mb-4 text-left">
+          <AlertDialogTitle className="text-md md:text-lg font-medium leading-snug mb-4 text-left">
             {title || "Are you sure you want to proceed?"}
           </AlertDialogTitle>
           <AlertDialogDescription asChild>{children}</AlertDialogDescription>

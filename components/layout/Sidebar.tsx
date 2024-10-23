@@ -7,7 +7,7 @@ import {
   Settings,
   UserIcon,
   RouteIcon,
-  PlusCircleIcon,
+  // PlusCircleIcon,
 } from "lucide-react";
 import { StaticImageData } from "next/image";
 import Link from "next/link";
@@ -35,11 +35,11 @@ const Sidebar = () => {
       pathname: "/journeys",
       icon: <RouteIcon width={20} height={20} />,
     },
-    {
-      name: "Create",
-      pathname: "/create",
-      icon: <PlusCircleIcon width={20} height={20} />,
-    },
+    // {
+    //   name: "Create",
+    //   pathname: "/create",
+    //   icon: <PlusCircleIcon width={20} height={20} />,
+    // },
     {
       name: "Profile",
       pathname: "/profile",
@@ -60,7 +60,7 @@ const Sidebar = () => {
   return (
     <div className="flex flex-col w-[200px] h-screen py-8 px-4 bg-background">
       <div className="flex items-center justify-between mb-6">
-        <Link href="/">
+        <Link href="/journeys">
           <h1 className="pl-2 text-2xl font-bricolage font-semibold">
             LifeSlice
           </h1>
@@ -95,7 +95,7 @@ const Sidebar = () => {
           className="flex items-center gap-2 py-3 w-full text-primary rounded-lg cursor-pointer"
           onClick={async () => {
             await logout();
-            router.push("/");
+            router.push("/login");
           }}
         >
           <LogOutIcon width={20} height={20} />

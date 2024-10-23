@@ -92,7 +92,7 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
     <div className="flex-1 w-full h-screen max-w-[600px] mx-auto flex md:items-center pt-12 md:pt-0 px-4">
       <div className="w-full">
         <div className="flex items-center justify-between mb-8">
-          <h3 className="text-3xl font-bold text-primary truncate">
+          <h3 className="text-2xl md:text-3xl text-primary truncate font-bricolage">
             Edit {journey.name}
           </h3>
           <Button
