@@ -17,10 +17,9 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import errorHandler from "@/lib/error.handler";
 import { toast } from "@/hooks/use-toast";
-import { ArrowUpFromLine, PlusIcon } from "lucide-react";
+import { ArrowUpFromLine, LoaderCircleIcon, PlusIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import useUploadImage from "@/hooks/use-upload-image";
-import { Spinner } from "@/components/common/spinner";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/supabase/provider";
 import { useRouter } from "next/navigation";
@@ -159,7 +158,13 @@ export default function CreateJourneyForm() {
                     accept=".gif,.jpg,.png"
                     className="absolute top-0 left-0 right-0 bottom-0 outline-none opacity-0"
                   />
-                  {uploadingImage && <Spinner />}
+                  {uploadingImage && (
+                    <LoaderCircleIcon
+                      width={16}
+                      height={16}
+                      className="animate-spin"
+                    />
+                  )}
                 </Button>
               </div>
             </div>

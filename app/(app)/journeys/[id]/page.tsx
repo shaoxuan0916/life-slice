@@ -3,9 +3,9 @@
 import { fetchJourneyById } from "@/lib/api/journey";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { Spinner } from "@/components/common/spinner";
 import JourneyPageHeader from "./partials/journey-page-header";
 import { Timeline } from "@/components/ui/timeline";
+import { LoaderCircleIcon } from "lucide-react";
 
 interface RouteParams {
   params: {
@@ -86,7 +86,8 @@ const JourneyPage = ({ params }: RouteParams) => {
     enabled: !!journeyId,
   });
 
-  if (isLoading) return <Spinner />;
+  if (isLoading)
+    return <LoaderCircleIcon width={16} height={16} className="animate-spin" />;
   if (error) return <div>Error fetching journey data.</div>;
   if (!journey) return <div>Data not found =(</div>;
 
