@@ -1,6 +1,6 @@
 "use client";
 
-import Spinner from "@/components/common/spinner";
+import { Spinner } from "@/components/common/spinner";
 import { fetchJourneyById } from "@/lib/api/journey";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";

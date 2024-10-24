@@ -4,7 +4,7 @@ import React from "react";
 import JourneyCard from "./partials/journey-card";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserJourneys } from "@/lib/api/journey";
-import Spinner from "@/components/common/spinner";
+import { Spinner } from "@/components/common/spinner";
 import Link from "next/link";
 
 const JourneysPage = () => {

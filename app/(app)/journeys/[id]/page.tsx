@@ -3,7 +3,7 @@
 import { fetchJourneyById } from "@/lib/api/journey";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import Spinner from "@/components/common/spinner";
+import { Spinner } from "@/components/common/spinner";
 import JourneyPageHeader from "./partials/journey-page-header";
 import { Timeline } from "@/components/ui/timeline";
 

@@ -20,7 +20,7 @@ import { toast } from "@/hooks/use-toast";
 import { ArrowUpFromLine } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import useUploadImage from "@/hooks/use-upload-image";
-import Spinner from "@/components/common/spinner";
+import { Spinner } from "@/components/common/spinner";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";

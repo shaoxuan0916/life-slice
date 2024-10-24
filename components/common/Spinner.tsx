@@ -1,8 +1,9 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { LoaderCircleIcon } from "lucide-react";
-import React from "react";
 
-const Spinner = ({ className }: { className?: string }) => {
+export function Spinner({ className }: { className?: string }) {
   return (
     <LoaderCircleIcon
       width={16}
@@ -10,6 +11,4 @@ const Spinner = ({ className }: { className?: string }) => {
       className={cn("animate-spin", className)}
     />
   );
-};
-
-export default Spinner;
+}
