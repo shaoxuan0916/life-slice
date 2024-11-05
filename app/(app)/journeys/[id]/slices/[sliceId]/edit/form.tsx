@@ -19,71 +19,80 @@ import errorHandler from "@/lib/error.handler";
 import { toast } from "@/hooks/use-toast";
 import { ArrowUpFromLine, LoaderCircleIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import useUploadImage from "@/hooks/use-upload-image";
-import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
+import { deleteSliceById, editSliceById } from "@/lib/api/slice";
+import DatePicker from "@/components/common/datepicker";
+import useUploadImages from "@/hooks/use-upload-images";
 import ConfirmModal from "@/components/common/confirm-modal";
-import { deleteJourneyById, editJourneyById } from "@/lib/api/journey";
 import { useQueryClient } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "At least 3 characters" }),
-  description: z.string().optional(),
-  coverImgUrl: z.string().optional(),
+  description: z.string(),
+  imgUrls: z.array(z.string()),
+  sliceDate: z.string().datetime(),
 });
 
-interface EditJourneyFormProps {
-  journey: Journey;
+interface EditSliceFormProps {
+  journeyId: string;
+  slice: Slice;
 }
 
-export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
+export default function EditSliceForm({
+  slice,
+  journeyId,
+}: EditSliceFormProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const {
     handleFileInputChange,
-    loading: uploadingImage,
-    value: uploadedImageUrl,
-  } = useUploadImage();
+    loading: uploadingImages,
+    values: uploadedImageUrls,
+  } = useUploadImages();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: journey.name,
-      description: journey.description || undefined,
-      coverImgUrl: journey.cover_img_url || undefined,
+      name: slice.name,
+      description: slice.description,
+      imgUrls: slice.img_urls,
+      sliceDate: new Date(slice.slice_date).toISOString(),
     },
   });
   const { setValue, watch } = form;
 
   useEffect(() => {
-    if (uploadedImageUrl) {
-      setValue("coverImgUrl", uploadedImageUrl);
+    if (uploadedImageUrls.length > 0) {
+      setValue("imgUrls", uploadedImageUrls);
     }
-  }, [uploadedImageUrl, setValue]);
+  }, [uploadedImageUrls, setValue]);
 
   // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const { name, description, coverImgUrl } = values;
+    const sliceId = slice.id;
+    const { name, description, imgUrls, sliceDate } = values;
     setLoading(true);
     try {
-      const data = await editJourneyById(
-        journey.id,
+      const data = await editSliceById(
+        sliceId,
         name,
         description,
-        coverImgUrl
+        imgUrls,
+        sliceDate
       );
       if (data) {
         queryClient.invalidateQueries({
-          queryKey: ["journey"],
+          queryKey: ["slice"],
           refetchType: "active",
         });
         toast({
-          description: "Journey updated!",
+          description: "Slice updated!",
         });
-        router.push(`/journeys/${data[0].id}`);
+        router.push(`/journeys/${journeyId}`);
       }
     } catch (error: unknown) {
       toast({ description: errorHandler(error), variant: "destructive" });
@@ -92,12 +101,26 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
     }
   };
 
+  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+
+    if (files && files.length > 4) {
+      toast({
+        variant: "destructive",
+        description: "You can only upload a maximum of 4 photos.",
+      });
+      return;
+    }
+
+    handleFileInputChange(event);
+  };
+
   return (
     <div className="flex-1 w-full max-w-[600px] mx-auto flex md:items-center py-12 md:pt-16 px-4">
       <div className="w-full">
         <div className="flex items-center justify-between mb-8">
-          <h3 className="text-2xl md:text-3xl text-primary truncate font-bricolage">
-            Edit {journey.name}
+          <h3 className="text-2xl md:text-3xl font-bricolage text-primary">
+            Edit {slice.name}
           </h3>
           <Button
             variant="destructive"
@@ -110,14 +133,14 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
 
         <ConfirmModal
           open={showModal}
-          title={`Are you sure you want to delete ${journey.name}?`}
+          title={`Are you sure you want to delete ${slice.name}?`}
           variant="destructive"
           confirmText="Delete"
           close={() => setShowModal(false)}
           onConfirm={async () => {
-            await deleteJourneyById(journey.id);
-            toast({ description: "Journey deleted!" });
-            router.push("/journeys");
+            await deleteSliceById(slice.id);
+            toast({ description: "Slice deleted!" });
+            router.push(`/journeys/${journeyId}`);
           }}
         />
 
@@ -130,11 +153,7 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input
-                      className="border-input"
-                      placeholder="What is this journey called?"
-                      {...field}
-                    />
+                    <Input className="border-input" placeholder="" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -149,7 +168,8 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
                   <FormControl>
                     <Textarea
                       className="border-input"
-                      placeholder="What is this journey about?"
+                      placeholder=""
+                      rows={2}
                       {...field}
                     />
                   </FormControl>
@@ -157,23 +177,39 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="sliceDate"
+              render={({ field }) => (
+                <DatePicker
+                  label="Date"
+                  date={field.value}
+                  setDate={field.onChange}
+                  disabledMatcher={{ after: new Date() }}
+                />
+              )}
+            />
             {/* Image */}
             <div className="flex flex-col gap-2">
-              <FormLabel>Cover Image</FormLabel>
-              <div className="flex items-center gap-4">
-                <Image
-                  src={
-                    watch("coverImgUrl") ||
-                    "/assets/images/default-cover-image.png"
-                  }
-                  alt="cover-image"
-                  width={100}
-                  height={100}
-                  className={cn(
-                    "rounded-full w-[100px] h-[100px] object-cover",
-                    watch("coverImgUrl") && "bg-none object-cover p-0"
-                  )}
-                />
+              <FormLabel>Images</FormLabel>
+              <div className="flex flex-col gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {watch("imgUrls") &&
+                    form
+                      .getValues("imgUrls")
+                      .map((img) => (
+                        <Image
+                          key={img}
+                          src={img}
+                          alt="slice-image"
+                          width={100}
+                          height={100}
+                          className={cn(
+                            "w-full h-full max-w-[180px] max-h-[180px] bg-none rounded-md object-cover p-0"
+                          )}
+                        />
+                      ))}
+                </div>
                 <Button variant="ghost" type="button" className="relative">
                   <ArrowUpFromLine
                     width={16}
@@ -181,16 +217,17 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
                     className="text-primary"
                   />
                   <p className="text-[14px] font-medium text-primary">
-                    Upload a photo
+                    Upload photos (max 4)
                   </p>
                   <input
-                    onChange={handleFileInputChange}
+                    onChange={onFileChange}
                     type="file"
                     name="file"
+                    multiple
                     accept=".gif,.jpg,.png"
                     className="absolute top-0 left-0 right-0 bottom-0 outline-none opacity-0"
                   />
-                  {uploadingImage && (
+                  {uploadingImages && (
                     <LoaderCircleIcon
                       width={16}
                       height={16}
@@ -200,9 +237,7 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
                 </Button>
               </div>
             </div>
-
             <Separator />
-
             <div className="w-full grid grid-cols-2 gap-4">
               <Button
                 variant="secondary"

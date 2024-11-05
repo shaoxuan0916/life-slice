@@ -3,6 +3,9 @@ import ConfirmModal from "@/components/common/confirm-modal";
 import MorePopover from "@/components/common/more-popover";
 import { toast } from "@/hooks/use-toast";
 import { deleteJourneyById } from "@/lib/api/journey";
+import { cn } from "@/lib/utils";
+import { PlusIcon } from "lucide-react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 
@@ -25,24 +28,32 @@ const JourneyPageHeader = ({
   return (
     <div className="sticky top-0 left-0 right-0 flex items-center justify-between gap-4 bg-background z-50 py-3 md:hidden">
       <BackButton link={goBackLink} showText />
-      <MorePopover>
-        <div className="flex flex-col gap-1">
-          {!isEdit && (
+      <div className="flex items-center gap-4">
+        <Link
+          href={`/create?type=slice&journeyId=${journey.id}&title=${journey.name}`}
+          className={cn("", isEdit && "hidden")}
+        >
+          <PlusIcon width={20} height={20} className="cursor-pointer" />
+        </Link>
+        <MorePopover>
+          <div className="flex flex-col gap-1">
+            {!isEdit && (
+              <div
+                onClick={() => router.push(`/journeys/${journey.id}/edit`)}
+                className="px-3 py-1 hover:bg-primary-foreground cursor-pointer rounded-md"
+              >
+                Edit
+              </div>
+            )}
             <div
-              onClick={() => router.push(`/journeys/${journey.id}/edit`)}
+              onClick={() => setShowModal(true)}
               className="px-3 py-1 hover:bg-primary-foreground cursor-pointer rounded-md"
             >
-              Edit
+              Delete
             </div>
-          )}
-          <div
-            onClick={() => setShowModal(true)}
-            className="px-3 py-1 hover:bg-primary-foreground cursor-pointer rounded-md"
-          >
-            Delete
           </div>
-        </div>
-      </MorePopover>
+        </MorePopover>
+      </div>
 
       <ConfirmModal
         open={showModal}

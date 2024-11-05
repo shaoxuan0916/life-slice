@@ -40,7 +40,7 @@ const useUploadImage = () => {
 
         // Upload to Supabase Storage
         const { data, error } = await supabase.storage
-          .from("journey-development")
+          .from(process.env.NEXT_PUBLIC_SUPABASE_BUCKET!)
           .upload(fileName, file, {
             cacheControl: "3600",
             upsert: false,

@@ -5,9 +5,12 @@ import JourneyCard from "./partials/journey-card";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserJourneys } from "@/lib/api/journey";
 import Link from "next/link";
-import { LoaderCircleIcon } from "lucide-react";
+import { LoaderCircleIcon, PlusIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const JourneysPage = () => {
+  const router = useRouter();
   const {
     data: journeys,
     error,
@@ -25,7 +28,20 @@ const JourneysPage = () => {
 
   return (
     <div className="w-full h-full flex flex-col">
-      <h3 className="text-2xl font-bricolage font-semibold mb-4">Journeys</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-2xl font-bricolage font-semibold">Journeys</h3>
+        <Button
+          className="hidden md:flex gap-2"
+          onClick={() => router.push("/create?type=journey")}
+        >
+          <PlusIcon
+            width={20}
+            height={20}
+            className="w-5 h-5 text-primary-foreground"
+          />
+          <p className="text-md font-semibold">Create</p>
+        </Button>
+      </div>
       <div className="pt-4 grid gap-4 lg:grid-cols-2">
         {journeys.length > 0 ? (
           journeys.map((j) => {

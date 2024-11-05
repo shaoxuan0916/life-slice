@@ -98,11 +98,7 @@ export default function CreateJourneyForm() {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input
-                      className="border-input"
-                      placeholder="What is this journey called?"
-                      {...field}
-                    />
+                    <Input className="border-input" placeholder="" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -117,7 +113,7 @@ export default function CreateJourneyForm() {
                   <FormControl>
                     <Textarea
                       className="border-input"
-                      placeholder="What is this journey about?"
+                      placeholder=""
                       {...field}
                     />
                   </FormControl>

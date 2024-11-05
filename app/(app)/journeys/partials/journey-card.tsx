@@ -12,11 +12,11 @@ const JourneyCard = ({ journey }: { journey: Journey }) => {
         alt="journey-cover-image"
         width={96}
         height={96}
-        className="w-16 h-16 lg:w-20 lg:h-20 rounded-full object-cover"
+        className="w-16 h-16 min-w-16 min-h-16 max-w-16 max-h-16 lg:w-20 lg:h-20 lg:min-w-20 lg:min-h-20 lg:max-w-20 lg:max-h-20 rounded-full object-cover"
       />
       <div className="flex flex-col">
         <p className="text-md lg:text:lg font-medium">{journey.name}</p>
-        <p className="text-sm text-neutral-700 dark:text-neutral-400">
+        <p className="text-sm text-neutral-700 dark:text-neutral-400 line-clamp-3">
           {journey.description}
         </p>
       </div>
