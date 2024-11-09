@@ -4,14 +4,6 @@ import { createClient } from "../supabase/client";
 const supabase = createClient();
 
 export const fetchJourneySlices = async (journeyId: string) => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const userId = user?.id;
-
-  if (!userId) throw new Error("No logged in user.");
-
   const { data: slices, error } = await supabase
     .from("slices")
     .select("*")

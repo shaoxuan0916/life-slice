@@ -15,6 +15,7 @@ import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { ModeToggle } from "../common/mode-toggle";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/supabase/provider";
 
 export type NavLinks = {
   name: string;
@@ -28,6 +29,7 @@ export type NavLinks = {
 const Sidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const { user } = useAuth();
 
   const routes: NavLinks[] = [
     {
@@ -94,12 +96,14 @@ const Sidebar = () => {
         <div
           className="flex items-center gap-2 py-3 w-full text-primary rounded-lg cursor-pointer"
           onClick={async () => {
-            await logout();
+            if (user) {
+              await logout();
+            }
             router.push("/login");
           }}
         >
           <LogOutIcon width={20} height={20} />
-          <p>Logout</p>
+          <p>{user ? "Logout" : "Login"}</p>
         </div>
       </div>
     </div>

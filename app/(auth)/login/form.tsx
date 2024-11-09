@@ -19,6 +19,7 @@ import errorHandler from "@/lib/error.handler";
 import { toast } from "@/hooks/use-toast";
 import { otpLogin, socialLogin } from "@/lib/api/auth";
 import { SendHorizonalIcon } from "lucide-react";
+import Link from "next/link";
 
 const formSchema = z.object({
   email: z.string().min(1, { message: "Email is required" }).email(),
@@ -113,6 +114,12 @@ export default function LoginForm() {
           />
           <p>Continue with Google</p>
         </Button>
+        <div className="mt-4 ml-1 flex items-center gap-2 text-sm">
+          Don&apos;t want to login?
+          <Link href="/" className="font-semibold">
+            Continue anonymously
+          </Link>
+        </div>
       </div>
     </div>
   );

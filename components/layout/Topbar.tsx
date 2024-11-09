@@ -22,10 +22,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { logout } from "@/lib/api/auth";
 import { ModeToggle } from "../common/mode-toggle";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/supabase/provider";
 
 const Topbar = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const { user } = useAuth();
   const [isSheetOpen, setSheetOpen] = React.useState(false);
 
   const handleClose = () => setSheetOpen(false);
@@ -101,12 +103,14 @@ const Topbar = () => {
             <div
               className="flex items-center gap-2 py-3 w-full text-primary rounded-lg cursor-pointer"
               onClick={async () => {
-                await logout();
+                if (user) {
+                  await logout();
+                }
                 router.push("/login");
               }}
             >
               <LogOutIcon width={20} height={20} />
-              {isSheetOpen && <p>Logout</p>}
+              {isSheetOpen && <p>{user ? "Logout" : "Login"}</p>}
             </div>
           </div>
         </SheetContent>

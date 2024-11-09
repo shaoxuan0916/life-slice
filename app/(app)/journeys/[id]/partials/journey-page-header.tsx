@@ -6,7 +6,7 @@ import { deleteJourneyById } from "@/lib/api/journey";
 import { cn } from "@/lib/utils";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 interface JourneyPageHeaderProps {
@@ -21,15 +21,11 @@ const JourneyPageHeader = ({
   isOwner,
 }: JourneyPageHeaderProps) => {
   const router = useRouter();
-  const pathname = usePathname();
   const [showModal, setShowModal] = useState<boolean>(false);
-  const goBackLink = pathname.includes("edit")
-    ? `/journeys/${journey.id}`
-    : "/journeys";
 
   return (
     <div className="sticky top-0 left-0 right-0 flex items-center justify-between gap-4 bg-background z-50 py-3 md:hidden">
-      <BackButton link={goBackLink} showText />
+      <BackButton showText />
       <div className={cn("flex items-center gap-4", !isOwner && "hidden")}>
         <Link
           href={`/create?type=slice&journeyId=${journey.id}&title=${journey.name}`}
