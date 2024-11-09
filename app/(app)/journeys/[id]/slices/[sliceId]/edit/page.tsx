@@ -2,11 +2,11 @@
 
 import { fetchSliceById } from "@/lib/api/slice";
 import { useQuery } from "@tanstack/react-query";
-import { LoaderCircleIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import React from "react";
 import EditSliceForm from "./form";
 import SlicePageHeader from "../partials/slice-page-header";
+import { Loader } from "@/components/common/loader";
 
 const EditSlicePage = () => {
   const { id: journeyId, sliceId } = useParams();
@@ -21,8 +21,7 @@ const EditSlicePage = () => {
     enabled: !!journeyId || !!sliceId,
   });
 
-  if (isLoading)
-    return <LoaderCircleIcon width={16} height={16} className="animate-spin" />;
+  if (isLoading) return <Loader />;
   if (error) return <div>Error fetching slice data.</div>;
   if (!slice) return <div>Data not found =(</div>;
 

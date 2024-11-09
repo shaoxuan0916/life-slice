@@ -3,6 +3,19 @@ import { createClient } from "../supabase/client";
 
 const supabase = createClient();
 
+export const fetchPublicJourneys = async () => {
+  const { data: journeys, error } = await supabase
+    .from("journeys")
+    .select("*")
+    .eq("is_public", true)
+    .order("updated_at", { ascending: false });
+
+  if (error) {
+    throw new Error(errorHandler(error));
+  }
+  return journeys;
+};
+
 export const fetchUserJourneys = async () => {
   const {
     data: { user },
@@ -40,7 +53,8 @@ export const fetchJourneyById = async (id: string) => {
 export const createJourney = async (
   name: string,
   description?: string,
-  coverImgUrl?: string
+  coverImgUrl?: string,
+  isPublic?: boolean
 ) => {
   const {
     data: { user },
@@ -58,6 +72,7 @@ export const createJourney = async (
         name,
         description,
         cover_img_url: coverImgUrl,
+        is_public: isPublic,
       },
     ])
     .select();
@@ -73,7 +88,8 @@ export const editJourneyById = async (
   journeyId: string,
   name: string,
   description?: string,
-  coverImgUrl?: string
+  coverImgUrl?: string,
+  isPublic?: boolean
 ) => {
   const {
     data: { user },
@@ -89,6 +105,7 @@ export const editJourneyById = async (
       name,
       description,
       cover_img_url: coverImgUrl,
+      is_public: isPublic,
       updated_at: new Date().toISOString(),
     })
     .eq("id", journeyId)

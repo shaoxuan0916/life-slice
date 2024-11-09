@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import errorHandler from "@/lib/error.handler";
 import { toast } from "@/hooks/use-toast";
-import { ArrowUpFromLine, LoaderCircleIcon } from "lucide-react";
+import { ArrowUpFromLine } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import useUploadImage from "@/hooks/use-upload-image";
 import { cn } from "@/lib/utils";
@@ -26,11 +27,14 @@ import { Separator } from "@/components/ui/separator";
 import ConfirmModal from "@/components/common/confirm-modal";
 import { deleteJourneyById, editJourneyById } from "@/lib/api/journey";
 import { useQueryClient } from "@tanstack/react-query";
+import { Switch } from "@/components/ui/switch";
+import { Loader } from "@/components/common/loader";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "At least 3 characters" }),
   description: z.string().optional(),
   coverImgUrl: z.string().optional(),
+  isPublic: z.boolean(),
 });
 
 interface EditJourneyFormProps {
@@ -54,6 +58,7 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
       name: journey.name,
       description: journey.description || undefined,
       coverImgUrl: journey.cover_img_url || undefined,
+      isPublic: journey.is_public || false,
     },
   });
   const { setValue, watch } = form;
@@ -66,14 +71,15 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
 
   // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const { name, description, coverImgUrl } = values;
+    const { name, description, coverImgUrl, isPublic } = values;
     setLoading(true);
     try {
       const data = await editJourneyById(
         journey.id,
         name,
         description,
-        coverImgUrl
+        coverImgUrl,
+        isPublic
       );
       if (data) {
         queryClient.invalidateQueries({
@@ -93,7 +99,7 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
   };
 
   return (
-    <div className="flex-1 w-full max-w-[600px] mx-auto flex md:items-center py-12 md:pt-16 px-4">
+    <div className="flex-1 w-full max-w-[600px] mx-auto flex md:items-center py-12 md:pt-8 px-4">
       <div className="w-full">
         <div className="flex items-center justify-between mb-8">
           <h3 className="text-2xl md:text-3xl text-primary truncate font-bricolage">
@@ -157,6 +163,28 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="isPublic"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Set journey as public
+                    </FormLabel>
+                    <FormDescription>
+                      Anyone can view this journey.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
             {/* Image */}
             <div className="flex flex-col gap-2">
               <FormLabel>Cover Image</FormLabel>
@@ -190,13 +218,7 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
                     accept=".gif,.jpg,.png"
                     className="absolute top-0 left-0 right-0 bottom-0 outline-none opacity-0"
                   />
-                  {uploadingImage && (
-                    <LoaderCircleIcon
-                      width={16}
-                      height={16}
-                      className="animate-spin"
-                    />
-                  )}
+                  {uploadingImage && <Loader />}
                 </Button>
               </div>
             </div>

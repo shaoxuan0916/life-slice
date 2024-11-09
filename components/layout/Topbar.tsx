@@ -6,8 +6,8 @@ import {
   Headset,
   LogOutIcon,
   MenuIcon,
-  // PlusCircleIcon,
   RouteIcon,
+  SearchIcon,
   Settings,
   UserIcon,
 } from "lucide-react";
@@ -32,15 +32,15 @@ const Topbar = () => {
 
   const routes: NavLinks[] = [
     {
+      name: "Explore",
+      pathname: "/",
+      icon: <SearchIcon width={20} height={20} />,
+    },
+    {
       name: "Journeys",
       pathname: "/journeys",
       icon: <RouteIcon width={20} height={20} />,
     },
-    // {
-    //   name: "Create",
-    //   pathname: "/create",
-    //   icon: <PlusCircleIcon width={20} height={20} />,
-    // },
     {
       name: "Profile",
       pathname: "/profile",

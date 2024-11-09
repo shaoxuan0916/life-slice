@@ -14,10 +14,12 @@ export const Timeline = ({
   data,
   journeyId,
   title,
+  isOwner,
 }: {
   data: Slice[];
   journeyId: string;
   title: string;
+  isOwner: boolean;
 }) => {
   const router = useRouter();
 
@@ -35,7 +37,7 @@ export const Timeline = ({
                   <div className="h-4 w-4 rounded-full bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 p-2" />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <h3 className="hidden md:block text-xl md:pl-20 md:text-4xl font-bold font-bricolage text-neutral-500 dark:text-neutral-500 ">
+                  <h3 className="hidden md:block text-xl md:pl-20 md:text-2xl font-bold font-bricolage text-neutral-500 dark:text-neutral-500 ">
                     {item.name}
                   </h3>
                   <p className="hidden md:block text-md md:pl-20 md:text-lg font-semibold text-neutral-600 dark:text-neutral-300">
@@ -48,7 +50,7 @@ export const Timeline = ({
                   <h3 className="md:hidden block text-2xl text-left font-bold text-neutral-500 dark:text-neutral-500">
                     {item.name}
                   </h3>
-                  <div className="mt-2">
+                  <div className={cn("mt-2", !isOwner && "hidden")}>
                     <MorePopover btnClassname="text-neutral-500 w-4 h-4 md:hidden">
                       <div className="flex flex-col gap-1">
                         <div
@@ -72,20 +74,22 @@ export const Timeline = ({
                   <p className="text-neutral-800 dark:text-neutral-300 text-sm md:text-[16px] leading-6 font-normal mb-8">
                     {item.description}
                   </p>
-                  <MorePopover btnClassname="text-neutral-500 w-4 h-4 hidden md:flex ">
-                    <div className="flex flex-col gap-1">
-                      <div
-                        onClick={() =>
-                          router.push(
-                            `/journeys/${journeyId}/slices/${item.id}/edit`
-                          )
-                        }
-                        className="px-3 py-1 hover:bg-primary-foreground cursor-pointer rounded-md"
-                      >
-                        Edit
+                  <div className={cn("", !isOwner && "hidden")}>
+                    <MorePopover btnClassname="text-neutral-500 w-4 h-4 hidden md:flex ">
+                      <div className="flex flex-col gap-1">
+                        <div
+                          onClick={() =>
+                            router.push(
+                              `/journeys/${journeyId}/slices/${item.id}/edit`
+                            )
+                          }
+                          className="px-3 py-1 hover:bg-primary-foreground cursor-pointer rounded-md"
+                        >
+                          Edit
+                        </div>
                       </div>
-                    </div>
-                  </MorePopover>
+                    </MorePopover>
+                  </div>
                 </div>
                 <div
                   className={cn("flex flex-col lg:grid xl:grid-cols-2 gap-4")}
@@ -106,7 +110,7 @@ export const Timeline = ({
             </div>
           ))}
         </div>
-      ) : (
+      ) : isOwner ? (
         <div className="pt-20 flex justify-center">
           <Link
             href={`/create?type=slice&journeyId=${journeyId}&title=${title}`}
@@ -117,6 +121,8 @@ export const Timeline = ({
             </Button>
           </Link>
         </div>
+      ) : (
+        <div className="p-4 italic">No slices yet.</div>
       )}
     </div>
   );

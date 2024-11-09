@@ -7,7 +7,7 @@ import {
   Settings,
   UserIcon,
   RouteIcon,
-  // PlusCircleIcon,
+  SearchIcon,
 } from "lucide-react";
 import { StaticImageData } from "next/image";
 import Link from "next/link";
@@ -31,15 +31,15 @@ const Sidebar = () => {
 
   const routes: NavLinks[] = [
     {
+      name: "Explore",
+      pathname: "/",
+      icon: <SearchIcon width={20} height={20} />,
+    },
+    {
       name: "Journeys",
       pathname: "/journeys",
       icon: <RouteIcon width={20} height={20} />,
     },
-    // {
-    //   name: "Create",
-    //   pathname: "/create",
-    //   icon: <PlusCircleIcon width={20} height={20} />,
-    // },
     {
       name: "Profile",
       pathname: "/profile",

@@ -12,11 +12,13 @@ import React, { useState } from "react";
 interface JourneyPageHeaderProps {
   journey: Journey;
   isEdit?: boolean;
+  isOwner: boolean;
 }
 
 const JourneyPageHeader = ({
   journey,
   isEdit = false,
+  isOwner,
 }: JourneyPageHeaderProps) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -28,7 +30,7 @@ const JourneyPageHeader = ({
   return (
     <div className="sticky top-0 left-0 right-0 flex items-center justify-between gap-4 bg-background z-50 py-3 md:hidden">
       <BackButton link={goBackLink} showText />
-      <div className="flex items-center gap-4">
+      <div className={cn("flex items-center gap-4", !isOwner && "hidden")}>
         <Link
           href={`/create?type=slice&journeyId=${journey.id}&title=${journey.name}`}
           className={cn("", isEdit && "hidden")}

@@ -5,11 +5,15 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import JourneyPageHeader from "./partials/journey-page-header";
 import { Timeline } from "@/components/ui/timeline";
-import { LoaderCircleIcon, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { fetchJourneySlices } from "@/lib/api/slice";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Loader } from "@/components/common/loader";
+import { useAuth } from "@/lib/supabase/provider";
+import { cn } from "@/lib/utils";
 
 interface RouteParams {
   params: {
@@ -19,6 +23,7 @@ interface RouteParams {
 
 const JourneyPage = ({ params }: RouteParams) => {
   const router = useRouter();
+  const { user } = useAuth();
 
   const journeyId = params.id;
   const {
@@ -41,29 +46,41 @@ const JourneyPage = ({ params }: RouteParams) => {
     enabled: !!journeyId,
   });
 
-  if (isLoadingJourney || isLoadingSlices)
-    return <LoaderCircleIcon width={16} height={16} className="animate-spin" />;
+  const isOwner = user?.id === journey?.user_id;
 
+  if (isLoadingJourney || isLoadingSlices) return <Loader />;
   if (errorJourney || errorSlices)
     return <div>Error fetching journey data.</div>;
-
   if (!journey || !slices) return <div>Data not found =(</div>;
 
   return (
     <div className="w-full h-full flex flex-col">
-      <JourneyPageHeader journey={journey} />
+      <JourneyPageHeader journey={journey} isOwner={isOwner} />
 
       <div className="flex items-center justify-between gap-8 py-8 px-4 md:px-8 lg:px-10 max-w-[1200px]">
-        <div className="flex flex-col max-w-[500px]">
-          <h2 className="text-2xl md:text-3xl mb-4 text-black font-bricolage dark:text-white">
-            {journey.name}
-          </h2>
+        <div className="flex flex-col">
+          <Badge variant="outline" className="w-fit mb-4 md:hidden">
+            {journey.is_public ? "Public" : "Private"}
+          </Badge>
+          <div className="flex items-center gap-4 mb-4">
+            <h2 className="text-xl md:text-2xl text-black font-bricolage dark:text-white line-clamp-2 md:line-clamp-1">
+              {journey.name}
+            </h2>
+            <Badge variant="outline" className="hidden md:flex">
+              {journey.is_public ? "Public" : "Private"}
+            </Badge>
+          </div>
           <p className="text-neutral-700 dark:text-neutral-300 text-sm md:text-[16px] leading-6 whitespace-pre-line">
             {journey.description}
           </p>
         </div>
 
-        <div className="hidden md:flex items-center gap-8">
+        <div
+          className={cn(
+            "hidden md:flex items-center gap-8",
+            !isOwner && "md:hidden"
+          )}
+        >
           <Link
             href={`/create?type=slice&journeyId=${journey.id}&title=${journey.name}`}
           >
@@ -79,7 +96,12 @@ const JourneyPage = ({ params }: RouteParams) => {
         </div>
       </div>
 
-      <Timeline data={slices} journeyId={journey.id} title={journey.name} />
+      <Timeline
+        data={slices}
+        journeyId={journey.id}
+        title={journey.name}
+        isOwner={isOwner}
+      />
     </div>
   );
 };

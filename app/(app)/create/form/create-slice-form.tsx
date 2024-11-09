@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import errorHandler from "@/lib/error.handler";
 import { toast } from "@/hooks/use-toast";
-import { ArrowUpFromLine, LoaderCircleIcon, PlusIcon } from "lucide-react";
+import { ArrowUpFromLine, PlusIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/supabase/provider";
@@ -27,6 +27,7 @@ import { BackButton } from "@/components/common/back-button";
 import { createSlice } from "@/lib/api/slice";
 import DatePicker from "@/components/common/datepicker";
 import useUploadImages from "@/hooks/use-upload-images";
+import { Loader } from "@/components/common/loader";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "At least 3 characters" }),
@@ -207,13 +208,7 @@ export default function CreateSliceForm() {
                     accept=".gif,.jpg,.png"
                     className="absolute top-0 left-0 right-0 bottom-0 outline-none opacity-0"
                   />
-                  {uploadingImages && (
-                    <LoaderCircleIcon
-                      width={16}
-                      height={16}
-                      className="animate-spin"
-                    />
-                  )}
+                  {uploadingImages && <Loader />}
                 </Button>
               </div>
             </div>

@@ -5,9 +5,10 @@ import JourneyCard from "./partials/journey-card";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserJourneys } from "@/lib/api/journey";
 import Link from "next/link";
-import { LoaderCircleIcon, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Loader } from "@/components/common/loader";
 
 const JourneysPage = () => {
   const router = useRouter();
@@ -20,8 +21,7 @@ const JourneysPage = () => {
     queryFn: () => fetchUserJourneys(),
   });
 
-  if (isLoading)
-    return <LoaderCircleIcon width={16} height={16} className="animate-spin" />;
+  if (isLoading) return <Loader />;
   if (error) return <div>Error fetching journeys data.</div>;
   if (!journeys)
     return <div className="w-full h-full flex flex-col">Data not found =(</div>;
