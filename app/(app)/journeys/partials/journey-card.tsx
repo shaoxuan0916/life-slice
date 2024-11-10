@@ -1,11 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const JourneyCard = ({ journey }: { journey: Journey }) => {
+interface JourneyCardProps {
+  journey: Journey & { users: UserInfo };
+  showCreator?: boolean;
+}
+const JourneyCard = ({ journey, showCreator = false }: JourneyCardProps) => {
   return (
     <Link
       href={`/journeys/${journey.id}`}
-      className="flex items-center gap-4 w-full px-6 py-3 border-2 rounded-xl hover:bg-primary-foreground cursor-pointer"
+      className="flex items-center gap-4 w-full px-6 py-3 h-[130px] border-2 rounded-xl hover:bg-primary-foreground cursor-pointer"
     >
       <Image
         src={journey.cover_img_url || "/assets/images/default-cover-image.png"}
@@ -14,11 +18,18 @@ const JourneyCard = ({ journey }: { journey: Journey }) => {
         height={96}
         className="w-16 h-16 min-w-16 min-h-16 max-w-16 max-h-16 lg:w-20 lg:h-20 lg:min-w-20 lg:min-h-20 lg:max-w-20 lg:max-h-20 rounded-full object-cover"
       />
-      <div className="flex flex-col">
-        <p className="text-md lg:text:lg font-medium">{journey.name}</p>
-        <p className="text-sm text-neutral-700 dark:text-neutral-400 line-clamp-3">
+      <div className="flex flex-col gap-2 w-full h-full">
+        <p className="text-md lg:text:lg font-medium line-clamp-1">
+          {journey.name}
+        </p>
+        <p className="text-sm text-neutral-700 dark:text-neutral-400 line-clamp-2">
           {journey.description}
         </p>
+        {showCreator && (
+          <p className="mt-auto text-sm text-right text-neutral-500">
+            {journey.users.username}
+          </p>
+        )}
       </div>
     </Link>
   );

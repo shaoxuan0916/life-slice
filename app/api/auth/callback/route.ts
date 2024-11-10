@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import config from "@/lib/config";
-import { generateUsername } from "@/lib/functions";
+// import { generateUsername } from "@/lib/functions";
 
 export const dynamic = "force-dynamic";
 
@@ -30,27 +30,29 @@ export async function GET(req: NextRequest) {
         return;
       }
 
-      // If user doesn't exist, insert them into the users table
-      if (!existingUser) {
-        const { error: insertError } = await supabase.from("users").insert([
-          {
-            user_id: session.user.id,
-            email: session.user.email,
-            full_name: "",
-            username: generateUsername(),
-            is_verified: true,
-            is_pro: false,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-        ]);
+      console.log("Existing user:", existingUser);
 
-        if (insertError) {
-          console.error("Error inserting new user:", insertError.message);
-        } else {
-          // console.log("New user inserted successfully");
-        }
-      }
+      // If user doesn't exist, insert them into the users table
+      // if (!existingUser) {
+      //   const { error: insertError } = await supabase.from("users").insert([
+      //     {
+      //       user_id: session.user.id,
+      //       email: session.user.email,
+      //       full_name: "",
+      //       username: generateUsername(),
+      //       is_verified: true,
+      //       is_pro: false,
+      //       created_at: new Date().toISOString(),
+      //       updated_at: new Date().toISOString(),
+      //     },
+      //   ]);
+
+      //   if (insertError) {
+      //     console.error("Error inserting new user:", insertError.message);
+      //   } else {
+      //     console.log("New user inserted successfully");
+      //   }
+      // }
     }
   });
 

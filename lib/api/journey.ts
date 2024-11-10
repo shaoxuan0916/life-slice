@@ -3,14 +3,30 @@ import { createClient } from "../supabase/client";
 
 const supabase = createClient();
 
-export const fetchPublicJourneys = async () => {
-  const { data: journeys, error } = await supabase
+export const fetchPublicJourneys = async (searchText?: string) => {
+  let query = supabase
     .from("journeys")
-    .select("*")
+    .select(
+      `
+      *,
+      users (
+        id,
+        username
+      )
+      `
+    )
     .eq("is_public", true)
     .order("updated_at", { ascending: false });
 
+  if (searchText !== "") {
+    console.log("searchText", searchText);
+    query = query.textSearch("name", `%${searchText}%`);
+  }
+
+  const { data: journeys, error } = await query;
+
   if (error) {
+    console.log("error", error);
     throw new Error(errorHandler(error));
   }
   return journeys;

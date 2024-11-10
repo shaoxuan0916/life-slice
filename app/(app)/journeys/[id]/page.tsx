@@ -2,10 +2,10 @@
 
 import { fetchJourneyById } from "@/lib/api/journey";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useState } from "react";
 import JourneyPageHeader from "./partials/journey-page-header";
 import { Timeline } from "@/components/ui/timeline";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, Share2Icon } from "lucide-react";
 import { fetchJourneySlices } from "@/lib/api/slice";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader } from "@/components/common/loader";
 import { useAuth } from "@/lib/supabase/provider";
 import { cn } from "@/lib/utils";
+import ModalShareLink from "./partials/modal-share-link";
 
 interface RouteParams {
   params: {
@@ -24,6 +25,7 @@ interface RouteParams {
 const JourneyPage = ({ params }: RouteParams) => {
   const router = useRouter();
   const { user } = useAuth();
+  const [showModal, setShowModal] = useState(false);
 
   const journeyId = params.id;
   const {
@@ -57,6 +59,11 @@ const JourneyPage = ({ params }: RouteParams) => {
     <div className="w-full h-full flex flex-col">
       <JourneyPageHeader journey={journey} isOwner={isOwner} />
 
+      <ModalShareLink
+        open={showModal}
+        onOpenChange={() => setShowModal(false)}
+      />
+
       <div className="flex items-center justify-between gap-8 py-8 px-4 md:px-8 lg:px-10 max-w-[1200px]">
         <div className="flex flex-col">
           <Badge variant="outline" className="w-fit mb-4 md:hidden">
@@ -86,6 +93,12 @@ const JourneyPage = ({ params }: RouteParams) => {
           >
             <PlusIcon width={24} height={24} className="cursor-pointer" />
           </Link>
+          <Share2Icon
+            width={24}
+            height={24}
+            className="cursor-pointer"
+            onClick={() => setShowModal(!showModal)}
+          />
           <Button
             onClick={() => router.push(`/journeys/${journeyId}/edit`)}
             className="px-8"

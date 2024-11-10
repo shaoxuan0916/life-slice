@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 
 interface BaseModalProps extends PropsWithChildren {
   open: boolean;
+  onOpenChange?: (val: boolean) => void;
   close?: () => void;
   title?: string;
   titleClassName?: string;
@@ -16,12 +17,20 @@ interface BaseModalProps extends PropsWithChildren {
 }
 
 export function BaseModal(props: BaseModalProps) {
-  const { open, close, title, titleClassName, className, children } = props;
+  const {
+    open,
+    onOpenChange,
+    close,
+    title,
+    titleClassName,
+    className,
+    children,
+  } = props;
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         close={close}
-        className={cn(className, "max-w-[600px] w-[90%] sm:w-full")}
+        className={cn("max-w-[600px] w-[90%] sm:w-full", className)}
       >
         <DialogHeader>
           <DialogTitle className={titleClassName}>{title}</DialogTitle>

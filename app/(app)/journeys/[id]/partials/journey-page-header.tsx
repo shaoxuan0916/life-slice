@@ -4,10 +4,11 @@ import MorePopover from "@/components/common/more-popover";
 import { toast } from "@/hooks/use-toast";
 import { deleteJourneyById } from "@/lib/api/journey";
 import { cn } from "@/lib/utils";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, Share2Icon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import ModalShareLink from "./modal-share-link";
 
 interface JourneyPageHeaderProps {
   journey: Journey;
@@ -22,10 +23,15 @@ const JourneyPageHeader = ({
 }: JourneyPageHeaderProps) => {
   const router = useRouter();
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [showCopyModal, setShowCopyModal] = useState<boolean>(false);
 
   return (
     <div className="sticky top-0 left-0 right-0 flex items-center justify-between gap-4 bg-background z-50 py-3 md:hidden">
       <BackButton showText />
+      <ModalShareLink
+        open={showCopyModal}
+        onOpenChange={() => setShowCopyModal(false)}
+      />
       <div className={cn("flex items-center gap-4", !isOwner && "hidden")}>
         <Link
           href={`/create?type=slice&journeyId=${journey.id}&title=${journey.name}`}
@@ -33,6 +39,12 @@ const JourneyPageHeader = ({
         >
           <PlusIcon width={20} height={20} className="cursor-pointer" />
         </Link>
+        <Share2Icon
+          width={20}
+          height={20}
+          className="cursor-pointer"
+          onClick={() => setShowCopyModal(!showCopyModal)}
+        />
         <MorePopover>
           <div className="flex flex-col gap-1">
             {!isEdit && (
