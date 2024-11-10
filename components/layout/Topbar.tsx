@@ -8,7 +8,7 @@ import {
   MenuIcon,
   RouteIcon,
   SearchIcon,
-  Settings,
+  // Settings,
   UserIcon,
 } from "lucide-react";
 import {
@@ -48,11 +48,11 @@ const Topbar = () => {
       pathname: "/profile",
       icon: <UserIcon width={20} height={20} />,
     },
-    {
-      name: "Settings",
-      pathname: "/settings",
-      icon: <Settings width={20} height={20} />,
-    },
+    // {
+    //   name: "Settings",
+    //   pathname: "/settings",
+    //   icon: <Settings width={20} height={20} />,
+    // },
     {
       name: "Support",
       pathname: "/support",

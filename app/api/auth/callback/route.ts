@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import config from "@/lib/config";
+import { generateUsername } from "@/lib/functions";
 
 export const dynamic = "force-dynamic";
 
@@ -36,7 +37,7 @@ export async function GET(req: NextRequest) {
             user_id: session.user.id,
             email: session.user.email,
             full_name: "",
-            username: "",
+            username: generateUsername(),
             is_verified: true,
             is_pro: false,
             created_at: new Date().toISOString(),

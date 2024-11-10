@@ -4,7 +4,7 @@ import { logout } from "@/lib/api/auth";
 import {
   LogOutIcon,
   Headset,
-  Settings,
+  // Settings,
   UserIcon,
   RouteIcon,
   SearchIcon,
@@ -47,11 +47,11 @@ const Sidebar = () => {
       pathname: "/profile",
       icon: <UserIcon width={20} height={20} />,
     },
-    {
-      name: "Settings",
-      pathname: "/settings",
-      icon: <Settings width={20} height={20} />,
-    },
+    // {
+    //   name: "Settings",
+    //   pathname: "/settings",
+    //   icon: <Settings width={20} height={20} />,
+    // },
     {
       name: "Support",
       pathname: "/support",
