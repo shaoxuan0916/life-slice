@@ -58,7 +58,14 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="w-full h-screen max-w-[500px] mx-auto flex items-center px-4">
+    <div className="w-full h-screen max-w-[1000px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center px-4">
+      <Image
+        src="/assets/vectors/signup.svg"
+        alt="signup"
+        width={200}
+        height={200}
+        className="w-full max-w-[250px] md:max-w-[400px] h-auto mx-auto hidden md:flex"
+      />
       <div className="w-full">
         <h1 className="text-3xl font-bold text-primary mb-8">
           Log in / Sign up

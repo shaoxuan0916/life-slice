@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -9,14 +10,17 @@ const JourneyCard = ({ journey, showCreator = false }: JourneyCardProps) => {
   return (
     <Link
       href={`/journeys/${journey.id}`}
-      className="flex items-center gap-4 w-full px-6 py-3 h-[130px] border-2 rounded-xl hover:bg-primary-foreground cursor-pointer"
+      className={cn(
+        "flex items-center gap-4 w-full px-6 py-3 h-[110px] border-2 rounded-xl hover:bg-primary-foreground cursor-pointer",
+        showCreator && "h-[120px]"
+      )}
     >
       <Image
         src={journey.cover_img_url || "/assets/images/default-cover-image.png"}
         alt="journey-cover-image"
         width={96}
         height={96}
-        className="w-16 h-16 min-w-16 min-h-16 max-w-16 max-h-16 lg:w-20 lg:h-20 lg:min-w-20 lg:min-h-20 lg:max-w-20 lg:max-h-20 rounded-full object-cover"
+        className="w-[72px] h-[72px] min-w-[72px] min-h-[72px] max-w-[72px] max-h-[72px] lg:w-20 lg:h-20 lg:min-w-20 lg:min-h-20 lg:max-w-20 lg:max-h-20 rounded-full object-cover"
       />
       <div className="flex flex-col gap-2 w-full h-full">
         <p className="text-md lg:text:lg font-medium line-clamp-1">

@@ -3,7 +3,11 @@ import { createClient } from "../supabase/client";
 
 const supabase = createClient();
 
-export const fetchPublicJourneys = async (searchText?: string) => {
+export const fetchPublicJourneys = async (
+  searchText?: string,
+  start: number = 0,
+  end: number = 9
+) => {
   let query = supabase
     .from("journeys")
     .select(
@@ -16,7 +20,8 @@ export const fetchPublicJourneys = async (searchText?: string) => {
       `
     )
     .eq("is_public", true)
-    .order("updated_at", { ascending: false });
+    .order("updated_at", { ascending: false })
+    .range(start, end);
 
   if (searchText !== "") {
     console.log("searchText", searchText);

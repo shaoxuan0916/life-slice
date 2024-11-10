@@ -25,9 +25,11 @@ const JourneyPageHeader = ({
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showCopyModal, setShowCopyModal] = useState<boolean>(false);
 
+  const backUrl = isEdit ? `/journeys/${journey.id}` : "/journeys";
+
   return (
     <div className="sticky top-0 left-0 right-0 flex items-center justify-between gap-4 bg-background z-50 py-3 md:hidden">
-      <BackButton showText />
+      <BackButton showText link={backUrl} />
       <ModalShareLink
         open={showCopyModal}
         onOpenChange={() => setShowCopyModal(false)}

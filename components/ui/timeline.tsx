@@ -111,7 +111,14 @@ export const Timeline = ({
           ))}
         </div>
       ) : isOwner ? (
-        <div className="pt-20 flex justify-center">
+        <div className="mt-12 md:mt-20 flex flex-col gap-8 items-center">
+          <Image
+            src="/assets/vectors/no-data.svg"
+            alt="no-data"
+            width={200}
+            height={200}
+            className="w-full max-w-[200px] h-auto mx-auto"
+          />
           <Link
             href={`/create?type=slice&journeyId=${journeyId}&title=${title}`}
           >
@@ -122,7 +129,16 @@ export const Timeline = ({
           </Link>
         </div>
       ) : (
-        <div className="p-4 italic">No slices yet.</div>
+        <div className="mt-12 md:mt-20 flex flex-col gap-8 items-center">
+          <Image
+            src="/assets/vectors/no-data.svg"
+            alt="no-data"
+            width={200}
+            height={200}
+            className="w-full max-w-[200px] h-auto mx-auto"
+          />
+          <p className="text-lg font-bricolage font-medium">No slices yet.</p>
+        </div>
       )}
     </div>
   );
