@@ -1,7 +1,7 @@
 "use client";
 
 import Sidebar from "@/components/layout/sidebar";
-// import Topbar from "@/components/layout/Topbar";
+// import Topbar from "@/components/layout/topbar";
 import { FloatingDock } from "@/components/layout/floating-dock";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -9,7 +9,7 @@ import React, { ReactNode } from "react";
 
 const AppLayout = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
-  const hideTopbar = pathname.startsWith("/journeys/");
+  // const hideTopbar = pathname.startsWith("/journeys/");
   const hideFloatingDock =
     pathname.startsWith("/journeys/") ||
     pathname.includes("edit") ||
@@ -23,8 +23,8 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
 
       <div
         className={cn(
-          "flex md:gap-4 min-h-screen pt-8 md:pt-0",
-          hideTopbar && "pt-4"
+          "flex md:gap-4 min-h-screen pt-8 md:pt-0"
+          // hideTopbar && "pt-4"
         )}
       >
         <div className="hidden md:flex h-full md:sticky md:top-0 md:left-0 z-50">
