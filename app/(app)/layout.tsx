@@ -1,6 +1,6 @@
 "use client";
 
-import Sidebar from "@/components/layout/sidebar";
+import Sidebar from "@/components/layout/Sidebar";
 // import Topbar from "@/components/layout/topbar";
 import { FloatingDock } from "@/components/layout/floating-dock";
 import { cn } from "@/lib/utils";
