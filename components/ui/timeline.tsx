@@ -10,6 +10,17 @@ import { Button } from "./button";
 import MorePopover from "../common/more-popover";
 import { useRouter } from "next/navigation";
 
+// Function to group slices by slice_date
+// const groupSlicesByDate = (slices: Slice[]): { [key: string]: Slice[] } => {
+//   return slices.reduce((acc, slice) => {
+//     if (!acc[slice.slice_date]) {
+//       acc[slice.slice_date] = [];
+//     }
+//     acc[slice.slice_date].push(slice); // Add slice to the corresponding date array
+//     return acc;
+//   }, {} as { [key: string]: Slice[] });
+// };
+
 export const Timeline = ({
   data,
   journeyId,
@@ -22,6 +33,8 @@ export const Timeline = ({
   isOwner: boolean;
 }) => {
   const router = useRouter();
+
+  // const groupedSlices = groupSlicesByDate(data);
 
   return (
     <div className="w-full max-w-[1200px] h-full bg-white dark:bg-neutral-950 md:px-10 pb-20">

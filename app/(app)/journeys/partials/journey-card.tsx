@@ -12,7 +12,7 @@ const JourneyCard = ({ journey, showCreator = false }: JourneyCardProps) => {
       href={`/journeys/${journey.id}`}
       className={cn(
         "flex items-center gap-4 w-full px-6 py-3 h-[110px] border-2 rounded-xl hover:bg-primary-foreground cursor-pointer",
-        showCreator && "h-[120px]"
+        showCreator && "h-[125px]"
       )}
     >
       <Image
