@@ -2,7 +2,7 @@
 
 import React, { ReactNode } from "react";
 import { Toaster } from "../components/ui/toaster";
-import GlobalStyles from "../components/layout/GlobalStyles";
+import GlobalStyles from "../components/layout/global-style";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
 import AuthProvider from "@/lib/supabase/provider";

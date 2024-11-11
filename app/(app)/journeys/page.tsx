@@ -32,7 +32,7 @@ const JourneysPage = () => {
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-2xl font-bricolage font-semibold">Journeys</h3>
         <Button
-          className="hidden md:flex gap-2"
+          className="flex gap-2 px-5"
           onClick={() => router.push("/create?type=journey")}
         >
           <PlusIcon

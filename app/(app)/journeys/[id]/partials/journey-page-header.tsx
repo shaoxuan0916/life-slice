@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import ModalShareLink from "./modal-share-link";
+import { useAuth } from "@/lib/supabase/provider";
 
 interface JourneyPageHeaderProps {
   journey: Journey;
@@ -21,6 +22,7 @@ const JourneyPageHeader = ({
   isEdit = false,
   isOwner,
 }: JourneyPageHeaderProps) => {
+  const { user } = useAuth();
   const router = useRouter();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showCopyModal, setShowCopyModal] = useState<boolean>(false);
@@ -29,15 +31,18 @@ const JourneyPageHeader = ({
 
   return (
     <div className="sticky top-0 left-0 right-0 flex items-center justify-between gap-4 bg-background z-50 py-3 md:hidden">
-      <BackButton showText link={backUrl} />
+      <BackButton
+        showText
+        link={journey.user_id === user?.id ? backUrl : "/"}
+      />
       <ModalShareLink
         open={showCopyModal}
         onOpenChange={() => setShowCopyModal(false)}
       />
-      <div className={cn("flex items-center gap-4", !isOwner && "hidden")}>
+      <div className={cn("flex items-center gap-4")}>
         <Link
           href={`/create?type=slice&journeyId=${journey.id}&title=${journey.name}`}
-          className={cn("", isEdit && "hidden")}
+          className={cn("", isEdit && "hidden", !isOwner && "hidden")}
         >
           <PlusIcon width={20} height={20} className="cursor-pointer" />
         </Link>
@@ -47,24 +52,26 @@ const JourneyPageHeader = ({
           className="cursor-pointer"
           onClick={() => setShowCopyModal(!showCopyModal)}
         />
-        <MorePopover>
-          <div className="flex flex-col gap-1">
-            {!isEdit && (
+        <div className={cn("", !isOwner && "hidden")}>
+          <MorePopover>
+            <div className="flex flex-col gap-1">
+              {!isEdit && (
+                <div
+                  onClick={() => router.push(`/journeys/${journey.id}/edit`)}
+                  className="px-3 py-1 hover:bg-primary-foreground cursor-pointer rounded-md"
+                >
+                  Edit
+                </div>
+              )}
               <div
-                onClick={() => router.push(`/journeys/${journey.id}/edit`)}
+                onClick={() => setShowModal(true)}
                 className="px-3 py-1 hover:bg-primary-foreground cursor-pointer rounded-md"
               >
-                Edit
+                Delete
               </div>
-            )}
-            <div
-              onClick={() => setShowModal(true)}
-              className="px-3 py-1 hover:bg-primary-foreground cursor-pointer rounded-md"
-            >
-              Delete
             </div>
-          </div>
-        </MorePopover>
+          </MorePopover>
+        </div>
       </div>
 
       <ConfirmModal

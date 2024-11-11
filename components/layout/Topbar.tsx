@@ -17,7 +17,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { NavLinks } from "./Sidebar";
+import { NavLinks } from "./sidebar";
 import { usePathname, useRouter } from "next/navigation";
 import { logout } from "@/lib/api/auth";
 import { ModeToggle } from "../common/mode-toggle";

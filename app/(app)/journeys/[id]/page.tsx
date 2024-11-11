@@ -15,6 +15,7 @@ import { Loader } from "@/components/common/loader";
 import { useAuth } from "@/lib/supabase/provider";
 import { cn } from "@/lib/utils";
 import ModalShareLink from "./partials/modal-share-link";
+import { BackButton } from "@/components/common/back-button";
 
 interface RouteParams {
   params: {
@@ -70,6 +71,9 @@ const JourneyPage = ({ params }: RouteParams) => {
             {journey.is_public ? "Public" : "Private"}
           </Badge>
           <div className="flex items-center gap-4 mb-4">
+            <div className="hidden md:flex">
+              <BackButton />
+            </div>
             <h2 className="text-xl md:text-2xl text-black font-bricolage dark:text-white line-clamp-2 md:line-clamp-1">
               {journey.name}
             </h2>
@@ -82,14 +86,10 @@ const JourneyPage = ({ params }: RouteParams) => {
           </p>
         </div>
 
-        <div
-          className={cn(
-            "hidden md:flex items-center gap-8",
-            !isOwner && "md:hidden"
-          )}
-        >
+        <div className={cn("hidden md:flex items-center gap-8")}>
           <Link
             href={`/create?type=slice&journeyId=${journey.id}&title=${journey.name}`}
+            className={cn("", !isOwner && "hidden")}
           >
             <PlusIcon width={24} height={24} className="cursor-pointer" />
           </Link>
@@ -101,7 +101,7 @@ const JourneyPage = ({ params }: RouteParams) => {
           />
           <Button
             onClick={() => router.push(`/journeys/${journeyId}/edit`)}
-            className="px-8"
+            className={cn("px-8", !isOwner && "hidden")}
             variant="secondary"
           >
             Edit
