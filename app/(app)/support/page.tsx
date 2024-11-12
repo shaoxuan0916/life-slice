@@ -46,6 +46,7 @@ const SupportPage = () => {
         toast({
           description: "Feedback sent!",
         });
+        form.reset();
       }
     } catch (error: unknown) {
       toast({ description: errorHandler(error), variant: "destructive" });

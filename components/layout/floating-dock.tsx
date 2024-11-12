@@ -19,8 +19,10 @@ import {
   UserIcon,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { usePathname } from "next/navigation";
 
 export const FloatingDock = ({ className }: { className?: string }) => {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
@@ -66,9 +68,12 @@ export const FloatingDock = ({ className }: { className?: string }) => {
   return (
     <>
       {open && (
-        <div className={cn("fixed inset-0 bg-black/10 backdrop-blur-sm")}></div>
+        <div
+          className={cn("fixed inset-0 bg-black/10 backdrop-blur-sm z-10")}
+          onClick={() => setOpen(false)}
+        ></div>
       )}
-      <div className={cn("fixed bottom-8 right-4 md:hidden", className)}>
+      <div className={cn("fixed bottom-8 right-4 md:hidden z-20", className)}>
         <AnimatePresence>
           {open && (
             <motion.div
@@ -97,7 +102,7 @@ export const FloatingDock = ({ className }: { className?: string }) => {
                       key={item.title}
                       className={cn(
                         "h-20 w-20 rounded-full bg-neutral-100/90 border-[1px] border-neutral-300 dark:bg-neutral-900/90 flex items-center justify-center",
-                        theme === "dark" && "dark:bg-neutral-200/40"
+                        theme === "dark" && "dark:bg-neutral-100/30"
                       )}
                       onClick={() =>
                         setTheme(theme === "dark" ? "light" : "dark")
@@ -110,7 +115,11 @@ export const FloatingDock = ({ className }: { className?: string }) => {
                       href={item?.href || ""}
                       key={item.title}
                       onClick={() => setOpen(!open)}
-                      className="h-20 w-20 rounded-full bg-neutral-100/90 border-[1px] border-neutral-300 dark:bg-neutral-900/90 flex items-center justify-center"
+                      className={cn(
+                        "h-20 w-20 rounded-full bg-neutral-100/90 border-[1px] border-neutral-300 dark:bg-neutral-900/90 flex items-center justify-center",
+                        pathname === item?.href &&
+                          "border-blue-500 bg-blue-400/30 dark:bg-blue-400/30"
+                      )}
                     >
                       <div className="h-6 w-6">{item.icon}</div>
                     </Link>

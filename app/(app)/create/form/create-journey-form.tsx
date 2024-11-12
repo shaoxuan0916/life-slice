@@ -34,7 +34,7 @@ const formSchema = z.object({
   name: z.string().min(3, { message: "At least 3 characters" }),
   description: z.string().optional(),
   coverImgUrl: z.string().optional(),
-  isPublic: z.boolean(),
+  isPublic: z.boolean().default(false),
 });
 
 export default function CreateJourneyForm() {
