@@ -23,9 +23,9 @@ export async function POST(req: NextRequest) {
   const body = await req.text();
   const signature = headers().get("stripe-signature");
 
-  console.log("cors", cors);
-
   const supabase = createClient();
+
+  console.log("cors", cors);
 
   let event;
 

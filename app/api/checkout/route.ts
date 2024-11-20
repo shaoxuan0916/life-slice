@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   const { userId } = await req.json();
   const lineItems = [
     {
-      price: "price_1QMhVQGOUtNF911vYcCzMw0g",
+      price: process.env.NEXT_PUBLIC_PRICE_ID,
       quantity: 1,
     },
   ];
