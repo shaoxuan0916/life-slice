@@ -19,13 +19,13 @@ const stripe = new Stripe(stripeApiKey, {
   typescript: true,
 });
 
-const supabase = createClient();
-
 export async function POST(req: NextRequest) {
   const body = await req.text();
   const signature = headers().get("stripe-signature");
 
   console.log("cors", cors);
+
+  const supabase = createClient();
 
   let event;
 
