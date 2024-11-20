@@ -1,17 +1,9 @@
-// import Cors from "micro-cors";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import errorHandler from "@/lib/error.handler";
 import { createClient } from "@/lib/supabase/client";
 // import { createClient } from "@/lib/supabase/server";
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-// const cors = Cors({
-//   allowMethods: ["POST", "HEAD"],
-// });
-
-// export const dynamic = "force-dynamic";
 
 const stripeApiKey = `${process.env.STRIPE_SECRET_KEY}`;
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -24,10 +16,7 @@ const stripe = new Stripe(stripeApiKey, {
 export async function POST(req: NextRequest) {
   const body = await req.text();
   const signature = headers().get("stripe-signature");
-
   const supabase = createClient();
-
-  // console.log("cors", cors);
 
   let event;
 
@@ -57,12 +46,14 @@ export async function POST(req: NextRequest) {
           .from("subscriptions")
           .insert([
             { user_id: event.data.object.client_reference_id, is_pro: true },
-          ]);
+          ])
+          .select();
 
         const { data: updateUserData, error: updateUserError } = await supabase
           .from("users")
           .update({ is_pro: true })
-          .eq("user_id", event.data.object.client_reference_id);
+          .eq("user_id", event.data.object.client_reference_id)
+          .select();
 
         console.log("subscription data", data, error);
         console.log("update user data", updateUserData, updateUserError);
