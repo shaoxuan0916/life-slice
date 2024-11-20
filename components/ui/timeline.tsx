@@ -5,10 +5,14 @@ import { formatDate } from "date-fns";
 import { PlusIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "./button";
 import MorePopover from "../common/more-popover";
 import { useRouter } from "next/navigation";
+import ConfirmModal from "../common/confirm-modal";
+import { deleteSliceById } from "@/lib/api/slice";
+import { toast } from "@/hooks/use-toast";
+import { QueryClient } from "@tanstack/react-query";
 
 // Function to group slices by slice_date
 // const groupSlicesByDate = (slices: Slice[]): { [key: string]: Slice[] } => {
@@ -32,12 +36,31 @@ export const Timeline = ({
   title: string;
   isOwner: boolean;
 }) => {
-  const router = useRouter();
+  const queryClient = new QueryClient();
 
+  const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
+  const [deleteSlice, setDeleteSlice] = useState<Slice | null>(null);
   // const groupedSlices = groupSlicesByDate(data);
 
   return (
     <div className="w-full max-w-[1200px] h-full bg-white dark:bg-neutral-950 md:px-10 pb-20">
+      <ConfirmModal
+        open={showModal && !!deleteSlice}
+        title={`Are you sure you want to delete ${deleteSlice?.name}?`}
+        variant="destructive"
+        confirmText="Delete"
+        close={() => setShowModal(false)}
+        onConfirm={async () => {
+          await deleteSliceById(deleteSlice?.id || "");
+          toast({ description: "Slice deleted!" });
+          setShowModal(false);
+          setDeleteSlice(null);
+          // TODO: Fix this to refetch the latest data after deletion
+          queryClient.invalidateQueries({ queryKey: ["journeys", journeyId] });
+        }}
+      />
+
       {data.length > 0 ? (
         <div className="relative max-w-7xl mx-auto">
           {data.map((item, index) => (
@@ -63,7 +86,7 @@ export const Timeline = ({
                   <h3 className="md:hidden block text-2xl text-left font-bold text-neutral-500 dark:text-neutral-500">
                     {item.name}
                   </h3>
-                  <div className={cn("mt-2", !isOwner && "hidden")}>
+                  <div className={cn("mt-2 ml-2", !isOwner && "hidden")}>
                     <MorePopover btnClassname="text-neutral-500 w-4 h-4 md:hidden">
                       <div className="flex flex-col gap-1">
                         <div
@@ -76,6 +99,15 @@ export const Timeline = ({
                         >
                           Edit
                         </div>
+                        <div
+                          onClick={() => {
+                            setDeleteSlice(item);
+                            setShowModal(true);
+                          }}
+                          className="px-3 py-1 hover:bg-primary-foreground cursor-pointer rounded-md"
+                        >
+                          Delete
+                        </div>
                       </div>
                     </MorePopover>
                   </div>
@@ -87,7 +119,7 @@ export const Timeline = ({
                   <p className="text-neutral-800 dark:text-neutral-300 text-sm md:text-[16px] leading-6 font-normal mb-8">
                     {item.description}
                   </p>
-                  <div className={cn("", !isOwner && "hidden")}>
+                  <div className={cn("ml-2", !isOwner && "hidden")}>
                     <MorePopover btnClassname="text-neutral-500 w-4 h-4 hidden md:flex ">
                       <div className="flex flex-col gap-1">
                         <div
@@ -99,6 +131,15 @@ export const Timeline = ({
                           className="px-3 py-1 hover:bg-primary-foreground cursor-pointer rounded-md"
                         >
                           Edit
+                        </div>
+                        <div
+                          onClick={() => {
+                            setDeleteSlice(item);
+                            setShowModal(true);
+                          }}
+                          className="px-3 py-1 hover:bg-primary-foreground cursor-pointer rounded-md"
+                        >
+                          Delete
                         </div>
                       </div>
                     </MorePopover>

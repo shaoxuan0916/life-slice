@@ -47,7 +47,6 @@ const useUploadImages = () => {
             });
 
           if (error) {
-            console.error("Error uploading file:", error.message);
             toast({
               description: `Failed to upload image ${file.name}.`,
               variant: "destructive",

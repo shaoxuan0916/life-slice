@@ -48,7 +48,6 @@ export default function EditProfileForm({ user }: EditUserFormProps) {
     const { fullName, username } = values;
     setLoading(true);
 
-    console.log(fullName, username);
     try {
       const data = await editUser(fullName, username);
       if (data) {

@@ -44,6 +44,12 @@ export const createSlice = async (
 
   if (!userId) throw new Error("No logged in user.");
 
+  const journeySlices = await fetchJourneySlices(journeyId);
+
+  if(journeySlices.length >= 30) {
+    throw new Error("Upgrade to premium to have more that 30 slices in a journey.");
+  }
+
   const { data, error } = await supabase
     .from("slices")
     .insert([

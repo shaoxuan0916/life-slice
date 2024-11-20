@@ -57,7 +57,10 @@ const SupportPage = () => {
 
   return (
     <div className="w-full h-full flex flex-col">
-      <h3 className="text-2xl font-bricolage font-semibold mb-4">Contact us</h3>
+      <h3 className="text-2xl font-bricolage font-semibold">Get In Touch</h3>
+      <p className="mt-2 mb-4 text-md text-neutral-600 dark:text-neutral-400">
+        We&apos;d love to hear from you!
+      </p>
       <div className="mt-8 lg:mt-16 pb-12 w-full grid grid-cols-1 lg:grid-cols-2 max-w-[1000px] items-center gap-8">
         <Image
           src="/assets/vectors/contact-us.svg"

@@ -54,7 +54,6 @@ export const otpLogin = async (email: string) => {
   });
 
   if (error) {
-    console.log("error:", error);
     throw new Error(errorHandler(error));
   }
 

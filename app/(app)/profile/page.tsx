@@ -41,7 +41,10 @@ const ProfilePage = () => {
         <div className="flex flex-col gap-2">
           <Label className="flex items-center gap-4">
             Email
-            <Badge className="" variant="outline">
+            <Badge
+              className="text-green-600 dark:text-green-300 border-green-600 dark:border-green-300"
+              variant="outline"
+            >
               {user[0].is_verified ? "Verified" : "Not verified"}
             </Badge>
           </Label>

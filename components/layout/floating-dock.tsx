@@ -10,12 +10,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
-  Headset,
   MoonStarIcon,
   PanelBottomCloseIcon,
   PanelBottomOpenIcon,
   RouteIcon,
   SearchIcon,
+  Settings,
   UserIcon,
 } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -54,9 +54,9 @@ export const FloatingDock = ({ className }: { className?: string }) => {
       icon: <UserIcon width={24} height={24} />,
     },
     {
-      title: "Support",
-      href: "/support",
-      icon: <Headset width={24} height={24} />,
+      title: "Settings",
+      href: "/settings",
+      icon: <Settings width={24} height={24} />,
     },
     {
       title: "Dark mode",

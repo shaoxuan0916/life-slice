@@ -1,5 +1,6 @@
 import errorHandler from "../error.handler";
 import { createClient } from "../supabase/client";
+import { fetchUser } from "./user";
 
 const supabase = createClient();
 
@@ -24,14 +25,12 @@ export const fetchPublicJourneys = async (
     .range(start, end);
 
   if (searchText !== "") {
-    console.log("searchText", searchText);
     query = query.textSearch("name", `%${searchText}%`);
   }
 
   const { data: journeys, error } = await query;
 
   if (error) {
-    console.log("error", error);
     throw new Error(errorHandler(error));
   }
   return journeys;
@@ -84,6 +83,13 @@ export const createJourney = async (
   const userId = user?.id;
 
   if (!userId) throw new Error("No logged in user.");
+
+  const userData = await fetchUser();
+  const userJourneys = await fetchUserJourneys();
+
+  if (userJourneys.length >= 3 && !userData[0].is_pro) {
+    throw new Error("Upgrade to premium to create more than 3 journeys.");
+  }
 
   const { data, error } = await supabase
     .from("journeys")
