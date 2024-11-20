@@ -45,18 +45,21 @@ export async function POST(req: NextRequest) {
         const { data, error } = await supabase
           .from("subscriptions")
           .insert([
-            { user_id: event.data.object.client_reference_id, is_pro: true },
+            {
+              user_id: event.data.object.client_reference_id.toString(),
+              is_pro: true,
+            },
           ])
           .select();
 
-        const { data: updateUserData, error: updateUserError } = await supabase
+        const { data: updatedUserData, error: updateUserError } = await supabase
           .from("users")
-          .update({ is_pro: true })
-          .eq("user_id", event.data.object.client_reference_id)
+          .update({ is_pro: true, updated_at: new Date().toISOString() })
+          .eq("user_id", event.data.object.client_reference_id.toString())
           .select();
 
         console.log("subscription data", data, error);
-        console.log("update user data", updateUserData, updateUserError);
+        console.log("update user data", updatedUserData, updateUserError);
       }
       break;
 
