@@ -1,13 +1,13 @@
-import Cors from "micro-cors";
+// import Cors from "micro-cors";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import errorHandler from "@/lib/error.handler";
 import { createClient } from "@/lib/supabase/server";
 
-const cors = Cors({
-  allowMethods: ["POST", "HEAD"],
-});
+// const cors = Cors({
+//   allowMethods: ["POST", "HEAD"],
+// });
 
 export const dynamic = "force-dynamic";
 

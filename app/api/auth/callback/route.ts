@@ -30,6 +30,8 @@ export async function GET(req: NextRequest) {
         return;
       }
 
+      console.log("Existing user:", existingUser);
+
       // If user doesn't exist, insert them into the users table
       // if (!existingUser) {
       //   const { error: insertError } = await supabase.from("users").insert([
