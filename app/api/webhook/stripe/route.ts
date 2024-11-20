@@ -1,16 +1,17 @@
-import Cors from "micro-cors";
+// import Cors from "micro-cors";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import errorHandler from "@/lib/error.handler";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
+// import { createClient } from "@/lib/supabase/server";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const cors = Cors({
-  allowMethods: ["POST", "HEAD"],
-});
+// const cors = Cors({
+//   allowMethods: ["POST", "HEAD"],
+// });
 
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 const stripeApiKey = `${process.env.STRIPE_SECRET_KEY}`;
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
