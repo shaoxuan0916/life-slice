@@ -5,6 +5,7 @@ import Stripe from "stripe";
 import errorHandler from "@/lib/error.handler";
 import { createClient } from "@/lib/supabase/server";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const cors = Cors({
   allowMethods: ["POST", "HEAD"],
 });
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
 
   const supabase = createClient();
 
-  console.log("cors", cors);
+  // console.log("cors", cors);
 
   let event;
 
