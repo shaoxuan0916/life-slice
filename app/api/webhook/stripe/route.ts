@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import errorHandler from "@/lib/error.handler";
 import { createClient } from "@/lib/supabase/client";
-// import { createClient } from "@/lib/supabase/server";
 
 const stripeApiKey = `${process.env.STRIPE_SECRET_KEY}`;
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -42,6 +41,7 @@ export async function POST(req: NextRequest) {
       // console.log("Payment successful: ", session);
 
       if (event.data.object.client_reference_id) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { data, error } = await supabase
           .from("subscriptions")
           .insert([
@@ -52,14 +52,12 @@ export async function POST(req: NextRequest) {
           ])
           .select();
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { data: updatedUserData, error: updateUserError } = await supabase
           .from("users")
           .update({ is_pro: true, updated_at: new Date().toISOString() })
           .eq("user_id", event.data.object.client_reference_id.toString())
           .select();
-
-        console.log("subscription data", data, error);
-        console.log("update user data", updatedUserData, updateUserError);
       }
       break;
 
