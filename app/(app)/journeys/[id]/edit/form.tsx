@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import ConfirmModal from "@/components/common/confirm-modal";
 import { deleteJourneyById, editJourneyById } from "@/lib/api/journey";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Switch } from "@/components/ui/switch";
 import { Loader } from "@/components/common/loader";
 
@@ -36,6 +36,8 @@ const formSchema = z.object({
   coverImgUrl: z.string().optional(),
   isPublic: z.boolean(),
 });
+
+type FormSchema = z.infer<typeof formSchema>;
 
 interface EditJourneyFormProps {
   journey: Journey;
@@ -52,7 +54,7 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
     value: uploadedImageUrl,
   } = useUploadImage();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: journey.name,
@@ -63,6 +65,31 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
   });
   const { setValue, watch } = form;
 
+  const mutation = useMutation({
+    mutationFn: (body: FormSchema) => {
+      return editJourneyById(
+        journey.id,
+        body.name,
+        body.description,
+        body.coverImgUrl,
+        body.isPublic
+      );
+    },
+    async onSuccess(data) {
+      queryClient.invalidateQueries({
+        queryKey: ["journeys", journey.id],
+        refetchType: "active",
+      });
+      toast({
+        description: "Journey updated!",
+      });
+      router.push(`/journeys/${data[0].id}`);
+    },
+    onError(error) {
+      toast({ description: errorHandler(error), variant: "destructive" });
+    },
+  });
+
   useEffect(() => {
     if (uploadedImageUrl) {
       setValue("coverImgUrl", uploadedImageUrl);
@@ -70,27 +97,10 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
   }, [uploadedImageUrl, setValue]);
 
   // 2. Define a submit handler.
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const { name, description, coverImgUrl, isPublic } = values;
+  const onSubmit = async (data: FormSchema) => {
     setLoading(true);
     try {
-      const data = await editJourneyById(
-        journey.id,
-        name,
-        description,
-        coverImgUrl,
-        isPublic
-      );
-      if (data) {
-        queryClient.invalidateQueries({
-          queryKey: ["journey"],
-          refetchType: "active",
-        });
-        toast({
-          description: "Journey updated!",
-        });
-        router.push(`/journeys/${data[0].id}`);
-      }
+      await mutation.mutateAsync(data);
     } catch (error: unknown) {
       toast({ description: errorHandler(error), variant: "destructive" });
     } finally {

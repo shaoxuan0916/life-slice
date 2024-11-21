@@ -22,7 +22,7 @@ const EditJourneyPage = ({ params }: RouteParams) => {
     error,
     isLoading,
   } = useQuery<Journey>({
-    queryKey: ["journey", journeyId],
+    queryKey: ["journeys", journeyId],
     queryFn: () => fetchJourneyById(journeyId),
     enabled: !!journeyId,
   });

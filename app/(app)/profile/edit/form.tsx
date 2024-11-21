@@ -18,13 +18,15 @@ import errorHandler from "@/lib/error.handler";
 import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { editUser } from "@/lib/api/user";
 
 const formSchema = z.object({
   fullName: z.string().min(3, { message: "At least 3 characters" }),
   username: z.string().min(6, { message: "At least 6 characters" }),
 });
+
+type FormSchema = z.infer<typeof formSchema>;
 
 interface EditUserFormProps {
   user: UserInfo;
@@ -35,7 +37,7 @@ export default function EditProfileForm({ user }: EditUserFormProps) {
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       fullName: user.full_name || "",
@@ -43,23 +45,30 @@ export default function EditProfileForm({ user }: EditUserFormProps) {
     },
   });
 
-  // 2. Define a submit handler.
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const { fullName, username } = values;
-    setLoading(true);
+  const mutation = useMutation({
+    mutationFn: (body: FormSchema) => {
+      return editUser(body.fullName, body.username);
+    },
+    async onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: ["user"],
+        refetchType: "active",
+      });
+      toast({
+        description: "User updated!",
+      });
+      router.push("/profile");
+    },
+    onError(error) {
+      toast({ description: errorHandler(error), variant: "destructive" });
+    },
+  });
 
+  // 2. Define a submit handler.
+  const onSubmit = async (data: FormSchema) => {
+    setLoading(true);
     try {
-      const data = await editUser(fullName, username);
-      if (data) {
-        queryClient.invalidateQueries({
-          queryKey: ["user"],
-          refetchType: "active",
-        });
-        toast({
-          description: "User updated!",
-        });
-        router.push("/profile");
-      }
+      await mutation.mutateAsync(data);
     } catch (error: unknown) {
       toast({ description: errorHandler(error), variant: "destructive" });
     } finally {

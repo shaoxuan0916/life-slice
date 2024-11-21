@@ -24,13 +24,20 @@ const formSchema = z.object({
   email: z.string(),
   message: z.string(),
 });
+
+type FormSchema = z.infer<typeof formSchema>;
 const SupportPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      message: "",
+    },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: FormSchema) => {
     const { name, email, message } = values;
     setLoading(true);
     try {

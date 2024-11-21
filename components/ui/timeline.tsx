@@ -155,7 +155,7 @@ export const Timeline = ({
                       alt="slice-image"
                       width={500}
                       height={500}
-                      className="rounded-lg object-cover w-fit h-full max-h-60 aspect-video shadow-md"
+                      className="rounded-lg object-cover w-full h-full aspect-square shadow-md"
                     />
                   ))}
                 </div>

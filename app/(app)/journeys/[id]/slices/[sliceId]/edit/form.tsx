@@ -25,7 +25,7 @@ import { deleteSliceById, editSliceById } from "@/lib/api/slice";
 import DatePicker from "@/components/common/datepicker";
 import useUploadImages from "@/hooks/use-upload-images";
 import ConfirmModal from "@/components/common/confirm-modal";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { Loader } from "@/components/common/loader";
 
@@ -35,6 +35,8 @@ const formSchema = z.object({
   imgUrls: z.array(z.string()),
   sliceDate: z.string().datetime(),
 });
+
+type FormSchema = z.infer<typeof formSchema>;
 
 interface EditSliceFormProps {
   journeyId: string;
@@ -55,7 +57,7 @@ export default function EditSliceForm({
     values: uploadedImageUrls,
   } = useUploadImages();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: slice.name,
@@ -66,6 +68,31 @@ export default function EditSliceForm({
   });
   const { setValue, watch } = form;
 
+  const mutation = useMutation({
+    mutationFn: (body: FormSchema) => {
+      return editSliceById(
+        slice.id,
+        body.name,
+        body.description,
+        body.imgUrls,
+        body.sliceDate
+      );
+    },
+    async onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: ["slices", slice.id],
+        refetchType: "active",
+      });
+      toast({
+        description: "Slice updated!",
+      });
+      router.push(`/journeys/${journeyId}`);
+    },
+    onError(error) {
+      toast({ description: errorHandler(error), variant: "destructive" });
+    },
+  });
+
   useEffect(() => {
     if (uploadedImageUrls.length > 0) {
       setValue("imgUrls", uploadedImageUrls);
@@ -73,28 +100,10 @@ export default function EditSliceForm({
   }, [uploadedImageUrls, setValue]);
 
   // 2. Define a submit handler.
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const sliceId = slice.id;
-    const { name, description, imgUrls, sliceDate } = values;
+  const onSubmit = async (data: FormSchema) => {
     setLoading(true);
     try {
-      const data = await editSliceById(
-        sliceId,
-        name,
-        description,
-        imgUrls,
-        sliceDate
-      );
-      if (data) {
-        queryClient.invalidateQueries({
-          queryKey: ["slice"],
-          refetchType: "active",
-        });
-        toast({
-          description: "Slice updated!",
-        });
-        router.push(`/journeys/${journeyId}`);
-      }
+      await mutation.mutateAsync(data);
     } catch (error: unknown) {
       toast({ description: errorHandler(error), variant: "destructive" });
     } finally {

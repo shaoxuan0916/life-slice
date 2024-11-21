@@ -16,7 +16,7 @@ const EditSlicePage = () => {
     error,
     isLoading,
   } = useQuery<Slice>({
-    queryKey: ["slice", sliceId],
+    queryKey: ["slices", sliceId],
     queryFn: () => fetchSliceById(sliceId as string),
     enabled: !!journeyId || !!sliceId,
   });

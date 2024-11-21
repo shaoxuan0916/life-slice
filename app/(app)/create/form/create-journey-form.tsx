@@ -29,6 +29,7 @@ import { createJourney } from "@/lib/api/journey";
 import { BackButton } from "@/components/common/back-button";
 import { Switch } from "@/components/ui/switch";
 import { Loader } from "@/components/common/loader";
+import { useMutation } from "@tanstack/react-query";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "At least 3 characters" }),
@@ -36,6 +37,8 @@ const formSchema = z.object({
   coverImgUrl: z.string().optional(),
   isPublic: z.boolean().default(false),
 });
+
+type FormSchema = z.infer<typeof formSchema>;
 
 export default function CreateJourneyForm() {
   const router = useRouter();
@@ -47,13 +50,33 @@ export default function CreateJourneyForm() {
     value: uploadedImageUrl,
   } = useUploadImage();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
     },
   });
   const { setValue, watch } = form;
+
+  const mutation = useMutation({
+    mutationFn: (body: FormSchema) => {
+      return createJourney(
+        body.name,
+        body.description,
+        body.coverImgUrl,
+        body.isPublic
+      );
+    },
+    async onSuccess(data) {
+      toast({
+        description: "New journey created!",
+      });
+      router.push(`/journeys/${data[0].id}`);
+    },
+    onError(error) {
+      toast({ description: errorHandler(error), variant: "destructive" });
+    },
+  });
 
   useEffect(() => {
     if (uploadedImageUrl) {
@@ -62,26 +85,12 @@ export default function CreateJourneyForm() {
   }, [uploadedImageUrl, setValue]);
 
   // 2. Define a submit handler.
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const { name, description, coverImgUrl, isPublic } = values;
+  const onSubmit = async (data: FormSchema) => {
     setLoading(true);
     try {
       const userId = user?.id;
       if (!userId) throw new Error("No logged in user.");
-
-      const data = await createJourney(
-        name,
-        description,
-        coverImgUrl,
-        isPublic
-      );
-
-      if (data) {
-        toast({
-          description: "New journey created!",
-        });
-        router.push(`/journeys/${data[0].id}`);
-      }
+      await mutation.mutateAsync(data);
     } catch (error: unknown) {
       toast({ description: errorHandler(error), variant: "destructive" });
     } finally {

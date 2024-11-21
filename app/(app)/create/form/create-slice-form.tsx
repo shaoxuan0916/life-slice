@@ -28,6 +28,7 @@ import { createSlice } from "@/lib/api/slice";
 import DatePicker from "@/components/common/datepicker";
 import useUploadImages from "@/hooks/use-upload-images";
 import { Loader } from "@/components/common/loader";
+import { useMutation } from "@tanstack/react-query";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "At least 3 characters" }),
@@ -35,6 +36,8 @@ const formSchema = z.object({
   imgUrls: z.array(z.string()),
   sliceDate: z.string().datetime(),
 });
+
+type FormSchema = z.infer<typeof formSchema>;
 
 export default function CreateSliceForm() {
   const router = useRouter();
@@ -50,7 +53,7 @@ export default function CreateSliceForm() {
   const journeyId = searchParams.get("journeyId") as string;
   const title = searchParams.get("title") as string;
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -61,6 +64,27 @@ export default function CreateSliceForm() {
   });
   const { setValue, watch } = form;
 
+  const mutation = useMutation({
+    mutationFn: (body: FormSchema) => {
+      return createSlice(
+        journeyId,
+        body.name,
+        body.description,
+        body.imgUrls,
+        body.sliceDate
+      );
+    },
+    async onSuccess() {
+      toast({
+        description: "New slice created!",
+      });
+      router.push(`/journeys/${journeyId}`);
+    },
+    onError(error) {
+      toast({ description: errorHandler(error), variant: "destructive" });
+    },
+  });
+
   useEffect(() => {
     if (uploadedImageUrls) {
       setValue("imgUrls", uploadedImageUrls);
@@ -68,28 +92,12 @@ export default function CreateSliceForm() {
   }, [uploadedImageUrls, setValue]);
 
   // 2. Define a submit handler.
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const { name, description, imgUrls, sliceDate } = values;
-
+  const onSubmit = async (data: FormSchema) => {
     setLoading(true);
     try {
       const userId = user?.id;
       if (!userId) throw new Error("No logged in user.");
-
-      const data = await createSlice(
-        journeyId,
-        name,
-        description,
-        imgUrls,
-        sliceDate
-      );
-
-      if (data) {
-        toast({
-          description: "New slice created!",
-        });
-        router.push(`/journeys/${journeyId}`);
-      }
+      await mutation.mutateAsync(data);
     } catch (error: unknown) {
       toast({ description: errorHandler(error), variant: "destructive" });
     } finally {
@@ -99,7 +107,6 @@ export default function CreateSliceForm() {
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-
     if (files && files.length > 4) {
       toast({
         variant: "destructive",
@@ -107,7 +114,6 @@ export default function CreateSliceForm() {
       });
       return;
     }
-
     handleFileInputChange(event);
   };
 
