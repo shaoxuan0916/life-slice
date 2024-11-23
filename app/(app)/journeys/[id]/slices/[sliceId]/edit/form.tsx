@@ -215,7 +215,7 @@ export default function EditSliceForm({
                           width={100}
                           height={100}
                           className={cn(
-                            "w-full h-full max-w-[180px] max-h-[180px] bg-none rounded-md object-cover p-0"
+                            "w-full h-auto aspect-square bg-none rounded-md object-cover p-0"
                           )}
                         />
                       ))}
