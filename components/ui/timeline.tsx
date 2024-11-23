@@ -116,7 +116,7 @@ export const Timeline = ({
                   {formatDate(item.slice_date, "PPP")}
                 </p>
                 <div className="flex items-start">
-                  <p className="text-neutral-800 dark:text-neutral-300 text-sm md:text-[16px] leading-6 font-normal mb-8">
+                  <p className="text-neutral-800 dark:text-neutral-300 text-sm md:text-[16px] leading-6 font-normal mb-8 whitespace-pre-line">
                     {item.description}
                   </p>
                   <div className={cn("ml-2", !isOwner && "hidden")}>
