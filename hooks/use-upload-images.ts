@@ -53,7 +53,7 @@ const useUploadImages = () => {
             });
           } else if (data) {
             const imageURL = supabase.storage
-              .from("journey-development")
+              .from(process.env.NEXT_PUBLIC_SUPABASE_BUCKET!)
               .getPublicUrl(fileName).data.publicUrl;
             uploadedUrls.push(imageURL);
           }
