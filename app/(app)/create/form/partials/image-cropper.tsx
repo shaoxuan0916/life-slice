@@ -89,9 +89,7 @@ function ImageCropper(props: {
         height={500}
         className="w-full h-auto object-cover"
         onLoad={() => {
-          if (imageRef.current) {
-            imageRef.current = imageRef.current;
-          }
+          console.log("image loaded");
         }}
       />
     </ReactCrop>
