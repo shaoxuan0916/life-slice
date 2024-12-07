@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import errorHandler from "@/lib/error.handler";
 import { toast } from "@/hooks/use-toast";
-import { ArrowUpFromLine, PlusIcon } from "lucide-react";
+import { ArrowUpFromLine, CropIcon, PlusIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/supabase/provider";
@@ -27,8 +27,8 @@ import { BackButton } from "@/components/common/back-button";
 import { createSlice } from "@/lib/api/slice";
 import DatePicker from "@/components/common/datepicker";
 import useUploadImages from "@/hooks/use-upload-images";
-import { Loader } from "@/components/common/loader";
 import { useMutation } from "@tanstack/react-query";
+import ImageCropper from "./partials/image-cropper";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "At least 3 characters" }),
@@ -44,11 +44,19 @@ export default function CreateSliceForm() {
   const { user } = useAuth();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState<boolean>(false);
-  const {
-    handleFileInputChange,
-    loading: uploadingImages,
-    values: uploadedImageUrls,
-  } = useUploadImages();
+
+  // Upload images to supabase storage
+  const { handleUploadImages, loading: uploadingImages } = useUploadImages();
+
+  // Store images in local state
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+
+  // Image cropper
+  const [imageToCrop, setImageToCrop] = useState<string | undefined>(undefined);
+  const [imageToCropIndex, setImageToCropIndex] = useState<number | undefined>(
+    undefined
+  );
+  const [croppedImage, setCroppedImage] = useState<File | undefined>(undefined);
 
   const journeyId = searchParams.get("journeyId") as string;
   const title = searchParams.get("title") as string;
@@ -62,10 +70,9 @@ export default function CreateSliceForm() {
       sliceDate: new Date().toISOString(),
     },
   });
-  const { setValue, watch } = form;
 
   const mutation = useMutation({
-    mutationFn: (body: FormSchema) => {
+    mutationFn: async (body: FormSchema) => {
       return createSlice(
         journeyId,
         body.name,
@@ -85,19 +92,14 @@ export default function CreateSliceForm() {
     },
   });
 
-  useEffect(() => {
-    if (uploadedImageUrls) {
-      setValue("imgUrls", uploadedImageUrls);
-    }
-  }, [uploadedImageUrls, setValue]);
-
   // 2. Define a submit handler.
   const onSubmit = async (data: FormSchema) => {
     setLoading(true);
     try {
       const userId = user?.id;
       if (!userId) throw new Error("No logged in user.");
-      await mutation.mutateAsync(data);
+      const imageUrls = await handleUploadImages(uploadedImages);
+      await mutation.mutateAsync({ ...data, imgUrls: imageUrls || [] });
     } catch (error: unknown) {
       toast({ description: errorHandler(error), variant: "destructive" });
     } finally {
@@ -105,6 +107,7 @@ export default function CreateSliceForm() {
     }
   };
 
+  // Function to handle files change (local upload)
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 4) {
@@ -114,11 +117,74 @@ export default function CreateSliceForm() {
       });
       return;
     }
-    handleFileInputChange(event);
+    if (files) {
+      const fileArray = Array.from(files);
+      setUploadedImages(fileArray);
+    }
+  };
+
+  // Function to select image to crop
+  const onSelectCropImage = ({
+    file,
+    index,
+  }: {
+    file: File;
+    index: number;
+  }) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImageToCrop(reader.result as string);
+      setImageToCropIndex(index);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Function to clear image cropper state
+  const clearCropImageState = () => {
+    setImageToCrop(undefined);
+    setImageToCropIndex(undefined);
+    setCroppedImage(undefined);
   };
 
   return (
-    <div className="flex-1 w-full h-screen max-w-[600px] mx-auto flex md:items-center pt-4 pb-12 md:pt-0 px-4">
+    <div className="flex-1 w-full inset-0 relative h-screen max-w-[600px] mx-auto flex md:items-center pt-4 pb-12 md:pt-0 px-4">
+      {imageToCrop && (
+        <div className="fixed inset-0 z-50 flex items-center bg-black/75 justify-center">
+          <div className="max-w-[500px] w-full h-auto relative bg-white rounded-lg p-4">
+            <ImageCropper
+              imageToCrop={imageToCrop}
+              onImageCropped={(croppedImage: File) => {
+                setCroppedImage(croppedImage);
+              }}
+            />
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={clearCropImageState}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  if (croppedImage && imageToCropIndex !== undefined) {
+                    setUploadedImages((prev) => {
+                      const updatedImages = [...prev];
+                      updatedImages[imageToCropIndex] = croppedImage;
+                      return updatedImages;
+                    });
+                  }
+                  clearCropImageState();
+                }}
+              >
+                Crop
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="w-full">
         <div className="flex items-center gap-8 mb-8">
           <BackButton />
@@ -181,21 +247,27 @@ export default function CreateSliceForm() {
               <FormLabel>Images</FormLabel>
               <div className="flex flex-col gap-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {watch("imgUrls").length > 0 &&
-                    form
-                      .getValues("imgUrls")
-                      .map((img) => (
+                  {uploadedImages.map((file, i) => {
+                    return (
+                      <div key={i} className="relative">
+                        <CropIcon
+                          className="absolute top-2 right-2 cursor-pointer p-1 bg-black/50 rounded-full"
+                          width={28}
+                          height={28}
+                          onClick={() => onSelectCropImage({ file, index: i })}
+                        />
                         <Image
-                          key={img}
-                          src={img}
+                          src={URL.createObjectURL(file)}
                           alt="slice-image"
                           width={100}
                           height={100}
                           className={cn(
-                            "w-full h-auto aspect-square bg-none rounded-md object-cover p-0"
+                            "w-full h-auto aspect-square rounded-md object-cover p-0"
                           )}
                         />
-                      ))}
+                      </div>
+                    );
+                  })}
                 </div>
                 <Button variant="ghost" type="button" className="relative">
                   <ArrowUpFromLine
@@ -211,10 +283,9 @@ export default function CreateSliceForm() {
                     type="file"
                     name="file"
                     multiple
-                    accept=".gif,.jpg,.png"
+                    accept=".gif,.jpg,.png,.jpeg"
                     className="absolute top-0 left-0 right-0 bottom-0 outline-none opacity-0"
                   />
-                  {uploadingImages && <Loader />}
                 </Button>
               </div>
             </div>
@@ -229,7 +300,11 @@ export default function CreateSliceForm() {
               >
                 Cancel
               </Button>
-              <Button className="col-span-2" type="submit" loading={loading}>
+              <Button
+                className="col-span-2"
+                type="submit"
+                loading={loading || uploadingImages}
+              >
                 <PlusIcon width={16} height={16} />
                 Create
               </Button>
