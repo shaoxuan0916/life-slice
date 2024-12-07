@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "./use-toast";
 import { useAuth } from "@/lib/supabase/provider";
@@ -16,10 +16,9 @@ const useUploadImages = () => {
     return types.includes(file.type);
   };
 
-  const handleFileInputChange = useCallback(
-    async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUploadImages = useCallback(
+    async (files: File[]) => {
       setLoading(true);
-      const files = event.target.files;
 
       if (!user?.id || !files) {
         toast({
@@ -67,11 +66,13 @@ const useUploadImages = () => {
 
       setValues(uploadedUrls);
       setLoading(false);
+
+      return uploadedUrls;
     },
     [supabase, user]
   );
 
-  return { handleFileInputChange, loading, values };
+  return { handleUploadImages, loading, values };
 };
 
 export default useUploadImages;

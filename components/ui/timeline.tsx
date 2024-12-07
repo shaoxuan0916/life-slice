@@ -2,28 +2,14 @@
 
 import { cn } from "@/lib/utils";
 import { formatDate } from "date-fns";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { Button } from "./button";
 import MorePopover from "../common/more-popover";
 import { useRouter } from "next/navigation";
-import ConfirmModal from "../common/confirm-modal";
-import { deleteSliceById } from "@/lib/api/slice";
-import { toast } from "@/hooks/use-toast";
-import { QueryClient } from "@tanstack/react-query";
-
-// Function to group slices by slice_date
-// const groupSlicesByDate = (slices: Slice[]): { [key: string]: Slice[] } => {
-//   return slices.reduce((acc, slice) => {
-//     if (!acc[slice.slice_date]) {
-//       acc[slice.slice_date] = [];
-//     }
-//     acc[slice.slice_date].push(slice); // Add slice to the corresponding date array
-//     return acc;
-//   }, {} as { [key: string]: Slice[] });
-// };
+import { Skeleton } from "./skeleton";
 
 export const Timeline = ({
   data,
@@ -36,30 +22,51 @@ export const Timeline = ({
   title: string;
   isOwner: boolean;
 }) => {
-  const queryClient = new QueryClient();
-
   const router = useRouter();
-  const [showModal, setShowModal] = useState(false);
-  const [deleteSlice, setDeleteSlice] = useState<Slice | null>(null);
-  // const groupedSlices = groupSlicesByDate(data);
+
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+
+  const onImageLoad = (img: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    // Ensure the image is visible
+    img.currentTarget.style.opacity = "1";
+    // Find the skeleton element and hide it
+    const skeleton = img.currentTarget
+      .closest(".relative")
+      ?.querySelector(".absolute");
+    if (skeleton) {
+      (skeleton as HTMLElement).style.opacity = "0";
+      (skeleton as HTMLElement).style.visibility = "hidden";
+    }
+  };
 
   return (
-    <div className="w-full max-w-[1200px] h-full bg-white dark:bg-neutral-950 md:px-10 pb-20">
-      <ConfirmModal
-        open={showModal && !!deleteSlice}
-        title={`Are you sure you want to delete ${deleteSlice?.name}?`}
-        variant="destructive"
-        confirmText="Delete"
-        close={() => setShowModal(false)}
-        onConfirm={async () => {
-          await deleteSliceById(deleteSlice?.id || "");
-          toast({ description: "Slice deleted!" });
-          setShowModal(false);
-          setDeleteSlice(null);
-          // TODO: Fix this to refetch the latest data after deletion
-          queryClient.invalidateQueries({ queryKey: ["journeys", journeyId] });
-        }}
-      />
+    <div className="relative w-full max-w-[1200px] h-full bg-white dark:bg-neutral-950 md:px-10 pb-20">
+      {/* Zoomed image */}
+      {zoomedImage && (
+        <>
+          <div
+            className="fixed inset-0 z-50 flex items-center bg-black/75 justify-center"
+            onClick={() => setZoomedImage(null)}
+          >
+            <div className="max-w-[90vw] md:max-w-[600px] max-h-[80vh] w-full h-auto relative aspect-square">
+              <div className="absolute top-2 right-2 cursor-pointer p-1 bg-black/50 rounded-full">
+                <XIcon
+                  width={20}
+                  height={20}
+                  onClick={() => setZoomedImage(null)}
+                />
+              </div>
+              <Image
+                src={zoomedImage}
+                alt="zoomed-image"
+                width={1000}
+                height={1000}
+                className="w-full h-full object-cover rounded-lg"
+              />
+            </div>
+          </div>
+        </>
+      )}
 
       {data.length > 0 ? (
         <div className="relative max-w-7xl mx-auto">
@@ -99,15 +106,6 @@ export const Timeline = ({
                         >
                           Edit
                         </div>
-                        <div
-                          onClick={() => {
-                            setDeleteSlice(item);
-                            setShowModal(true);
-                          }}
-                          className="px-3 py-1 hover:bg-primary-foreground cursor-pointer rounded-md"
-                        >
-                          Delete
-                        </div>
                       </div>
                     </MorePopover>
                   </div>
@@ -132,15 +130,6 @@ export const Timeline = ({
                         >
                           Edit
                         </div>
-                        <div
-                          onClick={() => {
-                            setDeleteSlice(item);
-                            setShowModal(true);
-                          }}
-                          className="px-3 py-1 hover:bg-primary-foreground cursor-pointer rounded-md"
-                        >
-                          Delete
-                        </div>
                       </div>
                     </MorePopover>
                   </div>
@@ -149,14 +138,19 @@ export const Timeline = ({
                   className={cn("flex flex-col lg:grid xl:grid-cols-2 gap-4")}
                 >
                   {item.img_urls?.map((imageUrl, i) => (
-                    <Image
-                      key={i}
-                      src={imageUrl}
-                      alt="slice-image"
-                      width={500}
-                      height={500}
-                      className="rounded-lg object-cover w-full h-full aspect-square shadow-md"
-                    />
+                    <div key={i} className="relative aspect-square">
+                      <Skeleton className="absolute inset-0 w-full h-full" />
+                      <Image
+                        src={imageUrl}
+                        alt="slice-image"
+                        width={500}
+                        height={500}
+                        loading="lazy"
+                        className="rounded-lg object-cover w-full h-full aspect-square shadow-md"
+                        onClick={() => setZoomedImage(imageUrl)}
+                        onLoad={(img) => onImageLoad(img)}
+                      />
+                    </div>
                   ))}
                 </div>
               </div>

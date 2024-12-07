@@ -44,6 +44,7 @@
     "react-dom": "^18",
     "react-dropzone": "^14.2.9",
     "react-hook-form": "^7.53.0",
+    "react-image-crop": "^11.0.7",
     "resend": "^4.0.1-alpha.0",
     "stripe": "^17.3.1",
     "tailwind-merge": "^2.5.3",
