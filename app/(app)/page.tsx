@@ -53,7 +53,7 @@ const ExplorePage = () => {
   return (
     // TODO: Infinite scroll down & enhance UI
     // TODO: Fix search in chinese
-    <div className="w-full h-full flex flex-col pb-16">
+    <div className="w-full h-full flex flex-col pt-8 md:pt-0 pb-16">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-2xl font-bricolage font-semibold">Explore</h3>
 

@@ -30,7 +30,7 @@ const JourneyPageHeader = ({
   const backUrl = isEdit ? `/journeys/${journey.id}` : "/journeys";
 
   return (
-    <div className="sticky top-0 left-0 right-0 flex items-center justify-between gap-4 bg-background z-50 py-3 md:hidden">
+    <div className="sticky top-0 left-0 right-0 flex items-center justify-between gap-4 bg-background z-50 py-4 md:hidden">
       <BackButton
         showText
         link={journey.user_id === user?.id ? backUrl : "/"}
