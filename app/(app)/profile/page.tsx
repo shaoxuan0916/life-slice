@@ -30,7 +30,7 @@ const ProfilePage = () => {
     return <div className="w-full h-full flex flex-col">User not found =(</div>;
 
   return (
-    <div className="w-full h-full flex flex-col max-w-[1000px]">
+    <div className="w-full h-full flex flex-col pt-8 md:pt-0 max-w-[1000px]">
       <div className="flex items-center justify-between gap-8 mb-12">
         <h3 className="text-2xl font-bricolage font-semibold">Profile</h3>
         <Button onClick={() => router.push("/profile/edit")} className="px-8">

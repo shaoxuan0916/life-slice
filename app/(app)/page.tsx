@@ -9,6 +9,7 @@ import JourneyCard from "./journeys/partials/journey-card";
 import Input from "@/components/common/input";
 import { SearchIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const ExplorePage = () => {
   const [journeyList, setJourneyList] = useState<
@@ -53,10 +54,9 @@ const ExplorePage = () => {
   return (
     // TODO: Infinite scroll down & enhance UI
     // TODO: Fix search in chinese
-    <div className="w-full h-full flex flex-col pb-16">
-      <div className="flex items-center justify-between mb-4">
+    <div className="w-full h-full flex flex-col pt-8 md:pt-0 pb-16">
+      <div className="flex items-center justify-between">
         <h3 className="text-2xl font-bricolage font-semibold">Explore</h3>
-
         <div className="flex items-center gap-2">
           <Input
             placeholder="Search"
@@ -88,38 +88,52 @@ const ExplorePage = () => {
           )}
         </div>
       </div>
-      <div>
-        {journeyList && journeyList?.length > 0 ? (
-          <div className="pt-4 grid gap-4 lg:grid-cols-2">
-            {journeyList?.map((j) => {
-              return <JourneyCard key={j.id} journey={j} showCreator />;
-            })}
+
+      <Tabs defaultValue="discover" className="w-full my-5">
+        <TabsList className="w-full max-w-[450px] grid grid-cols-2">
+          <TabsTrigger value="discover">Discover</TabsTrigger>
+          <TabsTrigger value="community">Community</TabsTrigger>
+        </TabsList>
+        <TabsContent value="discover">
+          <div>
+            {journeyList && journeyList?.length > 0 ? (
+              <div className="pt-4 grid gap-4 lg:grid-cols-2">
+                {journeyList?.map((j) => {
+                  return <JourneyCard key={j.id} journey={j} showCreator />;
+                })}
+              </div>
+            ) : (
+              <div className="mt-20 flex flex-col gap-8 items-center">
+                <Image
+                  src="/assets/vectors/no-data.svg"
+                  alt="no-data"
+                  width={200}
+                  height={200}
+                  className="w-full max-w-[200px] h-auto mx-auto"
+                />
+                <p className="text-lg font-bricolage font-medium">
+                  No journey found.
+                </p>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="mt-20 flex flex-col gap-8 items-center">
-            <Image
-              src="/assets/vectors/no-data.svg"
-              alt="no-data"
-              width={200}
-              height={200}
-              className="w-full max-w-[200px] h-auto mx-auto"
-            />
-            <p className="text-lg font-bricolage font-medium">
-              No journey found.
-            </p>
+          {isSuccess && journeys?.length >= limit && !isFetching && (
+            <Button
+              className="w-fit mt-4 mx-auto"
+              variant="outline"
+              onClick={handleLoadMore}
+              disabled={isFetching}
+            >
+              {isFetching ? "Loading..." : "Load More"}
+            </Button>
+          )}
+        </TabsContent>
+        <TabsContent value="community">
+          <div className="pt-4">
+            <p>No journeys found.</p>
           </div>
-        )}
-      </div>
-      {isSuccess && journeys?.length >= limit && !isFetching && (
-        <Button
-          className="w-fit mt-4 mx-auto"
-          variant="outline"
-          onClick={handleLoadMore}
-          disabled={isFetching}
-        >
-          {isFetching ? "Loading..." : "Load More"}
-        </Button>
-      )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

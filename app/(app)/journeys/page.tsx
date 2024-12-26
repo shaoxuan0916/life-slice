@@ -28,7 +28,7 @@ const JourneysPage = () => {
     return <div className="w-full h-full flex flex-col">Data not found =(</div>;
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col pt-8 md:pt-0">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-2xl font-bricolage font-semibold">Journeys</h3>
         <Button

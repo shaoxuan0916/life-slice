@@ -63,7 +63,7 @@ const SupportPage = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col pt-8 md:pt-0">
       <h3 className="text-2xl font-bricolage font-semibold">Get In Touch</h3>
       <p className="mt-2 mb-4 text-md text-neutral-600 dark:text-neutral-400">
         We&apos;d love to hear from you!

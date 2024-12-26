@@ -26,7 +26,7 @@ const MyPlan = () => {
   const isPro = subscription[0]?.is_pro;
 
   return (
-    <div className="w-full h-full flex flex-col pb-24">
+    <div className="w-full h-full flex flex-col pt-8 md:pt-0 pb-24">
       <h3 className="text-2xl lg:text-3xl font-bricolage font-semibold">
         My Plan
       </h3>

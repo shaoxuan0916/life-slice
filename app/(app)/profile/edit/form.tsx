@@ -77,7 +77,7 @@ export default function EditProfileForm({ user }: EditUserFormProps) {
   };
 
   return (
-    <div className="flex-1 w-full max-w-[1000px] flex md:items-center">
+    <div className="flex-1 w-full max-w-[1000px] pt-8 md:pt-0 flex md:items-center">
       <div className="w-full">
         <h3 className="text-2xl font-bricolage font-semibold mb-12">
           Edit Profile

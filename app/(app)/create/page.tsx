@@ -12,7 +12,7 @@ const CreatePage = () => {
   const [type, setType] = useState<string | null>(createType || null);
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center">
+    <div className="w-full h-full flex flex-col pt-8 md:pt-0 justify-center items-center">
       {!type ? (
         <>
           <p className="mb-8 text-xl md:text-2xl font-medium font-bricolage">
