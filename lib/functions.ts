@@ -1,4 +1,4 @@
-export function generateUsername() {
+export const generateUsername = () => {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let username = "";
@@ -7,4 +7,8 @@ export function generateUsername() {
     username += characters[randomIndex];
   }
   return username;
-}
+};
+
+export const sleep = (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};

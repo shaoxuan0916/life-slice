@@ -10,17 +10,20 @@ import { Button } from "./button";
 import MorePopover from "../common/more-popover";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "./skeleton";
+import { EmojiReactor } from "../common/emoji-reactor";
 
 export const Timeline = ({
   data,
   journeyId,
   title,
   isOwner,
+  isPublic,
 }: {
   data: Slice[];
   journeyId: string;
   title: string;
   isOwner: boolean;
+  isPublic: boolean;
 }) => {
   const router = useRouter();
 
@@ -114,7 +117,7 @@ export const Timeline = ({
                   {formatDate(item.slice_date, "PPP")}
                 </p>
                 <div className="flex items-start">
-                  <p className="text-neutral-800 dark:text-neutral-300 text-sm md:text-[16px] leading-6 font-normal mb-8 whitespace-pre-line">
+                  <p className="text-neutral-800 dark:text-neutral-300 text-sm md:text-[16px] leading-6 font-normal whitespace-pre-line">
                     {item.description}
                   </p>
                   <div className={cn("ml-2", !isOwner && "hidden")}>
@@ -134,8 +137,11 @@ export const Timeline = ({
                     </MorePopover>
                   </div>
                 </div>
+                {isPublic && <EmojiReactor sliceId={item.id} />}
                 <div
-                  className={cn("flex flex-col lg:grid xl:grid-cols-2 gap-4")}
+                  className={cn(
+                    "flex flex-col lg:grid xl:grid-cols-2 gap-4 mt-4"
+                  )}
                 >
                   {item.img_urls?.map((imageUrl, i) => (
                     <div key={i} className="relative aspect-square">

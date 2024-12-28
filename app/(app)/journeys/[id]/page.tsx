@@ -113,6 +113,7 @@ const JourneyPage = ({ params }: RouteParams) => {
         data={slices}
         journeyId={journey.id}
         title={journey.name}
+        isPublic={journey.is_public}
         isOwner={isOwner}
       />
     </div>
