@@ -18,7 +18,12 @@ const MyPlan = () => {
     queryFn: () => fetchUserSubsriptionPlan(),
   });
 
-  if (isLoading) return <Loader />;
+  if (isLoading)
+    return (
+      <div className="p-8">
+        <Loader />
+      </div>
+    );
   if (error) return <div>Error fetching user subsription plan.</div>;
   if (!subscription)
     return <div className="w-full h-full flex flex-col">Data not found =(</div>;

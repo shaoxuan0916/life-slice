@@ -29,7 +29,12 @@ const EditJourneyPage = ({ params }: RouteParams) => {
 
   const isOwner = user?.id === journey?.user_id;
 
-  if (isLoading) return <Loader />;
+  if (isLoading)
+    return (
+      <div className="p-8">
+        <Loader />
+      </div>
+    );
   if (error) return <div>Error fetching journey data.</div>;
   if (!journey) return <div>Data not found =(</div>;
 

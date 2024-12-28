@@ -4,37 +4,35 @@ import MorePopover from "@/components/common/more-popover";
 import { toast } from "@/hooks/use-toast";
 import { deleteJourneyById } from "@/lib/api/journey";
 import { cn } from "@/lib/utils";
-import { PlusIcon, Share2Icon } from "lucide-react";
+import { BookmarkIcon, PlusIcon, Share2Icon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import ModalShareLink from "./modal-share-link";
-import { useAuth } from "@/lib/supabase/provider";
+import { UseMutationResult } from "@tanstack/react-query";
 
 interface JourneyPageHeaderProps {
   journey: Journey;
   isEdit?: boolean;
   isOwner: boolean;
+  isFavorite?: boolean;
+  mutation?: UseMutationResult<unknown[] | null, Error, string, unknown>;
 }
 
 const JourneyPageHeader = ({
   journey,
   isEdit = false,
   isOwner,
+  isFavorite,
+  mutation,
 }: JourneyPageHeaderProps) => {
-  const { user } = useAuth();
   const router = useRouter();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showCopyModal, setShowCopyModal] = useState<boolean>(false);
 
-  const backUrl = isEdit ? `/journeys/${journey.id}` : "/journeys";
-
   return (
     <div className="sticky top-0 left-0 right-0 flex items-center justify-between gap-4 bg-background z-50 py-4 md:hidden">
-      <BackButton
-        showText
-        link={journey.user_id === user?.id ? backUrl : "/"}
-      />
+      <BackButton showText />
       <ModalShareLink
         open={showCopyModal}
         onOpenChange={() => setShowCopyModal(false)}
@@ -46,13 +44,24 @@ const JourneyPageHeader = ({
         >
           <PlusIcon width={20} height={20} className="cursor-pointer" />
         </Link>
+        {!isOwner && mutation && (
+          <BookmarkIcon
+            width={20}
+            height={20}
+            className={cn(
+              "cursor-pointer",
+              isFavorite && "text-amber-400 fill-amber-400"
+            )}
+            onClick={async () => await mutation.mutateAsync(journey.id)}
+          />
+        )}
         <Share2Icon
-          width={20}
-          height={20}
+          width={18}
+          height={18}
           className="cursor-pointer"
           onClick={() => setShowCopyModal(!showCopyModal)}
         />
-        <div className={cn("", !isOwner && "hidden")}>
+        {isOwner && (
           <MorePopover>
             <div className="flex flex-col gap-1">
               {!isEdit && (
@@ -71,7 +80,7 @@ const JourneyPageHeader = ({
               </div>
             </div>
           </MorePopover>
-        </div>
+        )}
       </div>
 
       <ConfirmModal

@@ -10,6 +10,8 @@ import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Loader } from "@/components/common/loader";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useFetchUserFavorite } from "@/hooks/user-favorite.hook";
 
 const JourneysPage = () => {
   const router = useRouter();
@@ -21,8 +23,15 @@ const JourneysPage = () => {
     queryKey: ["journeys"],
     queryFn: () => fetchUserJourneys(),
   });
+  // TODO: only fetch favorites if the "favorites" tab is selected
+  const { data: favorites } = useFetchUserFavorite();
 
-  if (isLoading) return <Loader />;
+  if (isLoading)
+    return (
+      <div className="p-8">
+        <Loader />
+      </div>
+    );
   if (error) return <div>Error fetching journeys data.</div>;
   if (!journeys)
     return <div className="w-full h-full flex flex-col">Data not found =(</div>;
@@ -43,31 +52,67 @@ const JourneysPage = () => {
           <p className="text-md font-semibold">Create</p>
         </Button>
       </div>
-      <div>
-        {journeys.length > 0 ? (
-          <div className="pt-4 grid gap-4 lg:grid-cols-2">
-            {journeys.map((j) => {
-              return <JourneyCard key={j.id} journey={j} />;
-            })}
+
+      <Tabs defaultValue="mine" className="w-full my-5">
+        <TabsList className="w-full max-w-[450px] grid grid-cols-2">
+          <TabsTrigger value="mine">Mine</TabsTrigger>
+          <TabsTrigger value="favorites">Favorites</TabsTrigger>
+        </TabsList>
+        <TabsContent value="mine">
+          <div>
+            {journeys.length > 0 ? (
+              <div className="pt-4 grid gap-4 lg:grid-cols-2">
+                {journeys.map((j) => {
+                  return <JourneyCard key={j.id} journey={j} />;
+                })}
+              </div>
+            ) : (
+              <div className="mt-24 w-full flex flex-col gap-8 items-center justify-center mx-auto text-center">
+                <Image
+                  src="/assets/vectors/adventure.svg"
+                  alt="contact-us"
+                  width={200}
+                  height={200}
+                  className="w-full max-w-[250px] lg:max-w-[400px] h-auto mx-auto"
+                />
+                <Link
+                  href="/create?type=journey"
+                  className="text-lg font-bricolage font-medium"
+                >
+                  Create your first journey now!
+                </Link>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="mt-24 w-full flex flex-col gap-8 items-center justify-center mx-auto text-center">
-            <Image
-              src="/assets/vectors/adventure.svg"
-              alt="contact-us"
-              width={200}
-              height={200}
-              className="w-full max-w-[250px] lg:max-w-[400px] h-auto mx-auto"
-            />
-            <Link
-              href="/create?type=journey"
-              className="text-lg font-bricolage font-medium"
-            >
-              Create your first journey now!
-            </Link>
+        </TabsContent>
+        <TabsContent value="favorites">
+          <div>
+            {favorites && favorites?.length > 0 ? (
+              <div className="pt-4 grid gap-4 lg:grid-cols-2">
+                {favorites.map((j) => {
+                  return <JourneyCard key={j.id} journey={j} />;
+                })}
+              </div>
+            ) : (
+              <div className="mt-24 w-full flex flex-col gap-8 items-center justify-center mx-auto text-center">
+                <Image
+                  src="/assets/vectors/adventure.svg"
+                  alt="contact-us"
+                  width={200}
+                  height={200}
+                  className="w-full max-w-[250px] lg:max-w-[400px] h-auto mx-auto"
+                />
+                <Link
+                  href="/create?type=journey"
+                  className="text-lg font-bricolage font-medium"
+                >
+                  No favorites yet.
+                </Link>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
