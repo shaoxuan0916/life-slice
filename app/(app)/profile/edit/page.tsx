@@ -16,7 +16,12 @@ const EditProfilePage = () => {
     queryFn: () => fetchUser(),
   });
 
-  if (isLoading) return <Loader />;
+  if (isLoading)
+    return (
+      <div className="p-8">
+        <Loader />
+      </div>
+    );
   if (error) return <div>Error fetching profile data.</div>;
   if (!user) return <div>Data not found =(</div>;
 

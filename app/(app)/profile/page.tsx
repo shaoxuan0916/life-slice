@@ -24,7 +24,12 @@ const ProfilePage = () => {
     queryFn: () => fetchUser(),
   });
 
-  if (isLoading) return <Loader />;
+  if (isLoading)
+    return (
+      <div className="p-8">
+        <Loader />
+      </div>
+    );
   if (error) return <div>Error fetching user&apos;s data.</div>;
   if (!user)
     return <div className="w-full h-full flex flex-col">User not found =(</div>;

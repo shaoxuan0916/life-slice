@@ -3,7 +3,7 @@
 import {
   handleSliceReaction,
   fetchSliceReactions,
-} from "@/lib/api/slice-reactions";
+} from "@/lib/api/slice-reaction";
 import { sleep } from "@/lib/functions";
 import { cn } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

@@ -21,7 +21,12 @@ const EditSlicePage = () => {
     enabled: !!journeyId || !!sliceId,
   });
 
-  if (isLoading) return <Loader />;
+  if (isLoading)
+    return (
+      <div className="p-8">
+        <Loader />
+      </div>
+    );
   if (error) return <div>Error fetching slice data.</div>;
   if (!slice) return <div>Data not found =(</div>;
 

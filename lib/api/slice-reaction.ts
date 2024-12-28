@@ -86,5 +86,3 @@ export const handleSliceReaction = async (
 
   return data;
 };
-
-// TODO: update and remove emoji reaction

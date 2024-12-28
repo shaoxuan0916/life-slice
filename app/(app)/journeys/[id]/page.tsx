@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import JourneyPageHeader from "./partials/journey-page-header";
 import { Timeline } from "@/components/ui/timeline";
-import { PlusIcon, Share2Icon } from "lucide-react";
+import { BookmarkIcon, PlusIcon, Share2Icon } from "lucide-react";
 import { fetchJourneySlices } from "@/lib/api/slice";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -16,6 +16,10 @@ import { useAuth } from "@/lib/supabase/provider";
 import { cn } from "@/lib/utils";
 import ModalShareLink from "./partials/modal-share-link";
 import { BackButton } from "@/components/common/back-button";
+import {
+  useCheckIsJourneyFavorite,
+  useHandleUserFavorite,
+} from "@/hooks/user-favorite.hook";
 
 interface RouteParams {
   params: {
@@ -49,16 +53,30 @@ const JourneyPage = ({ params }: RouteParams) => {
     enabled: !!journeyId,
   });
 
+  const { data: isFavorite } = useCheckIsJourneyFavorite(journeyId);
+
+  const mutation = useHandleUserFavorite();
+
   const isOwner = user?.id === journey?.user_id;
 
-  if (isLoadingJourney || isLoadingSlices) return <Loader />;
+  if (isLoadingJourney || isLoadingSlices)
+    return (
+      <div className="p-8">
+        <Loader />
+      </div>
+    );
   if (errorJourney || errorSlices)
     return <div>Error fetching journey data.</div>;
   if (!journey || !slices) return <div>Data not found =(</div>;
 
   return (
     <div className="w-full h-full flex flex-col">
-      <JourneyPageHeader journey={journey} isOwner={isOwner} />
+      <JourneyPageHeader
+        journey={journey}
+        isOwner={isOwner}
+        isFavorite={isFavorite}
+        mutation={mutation}
+      />
 
       <ModalShareLink
         open={showModal}
@@ -93,9 +111,20 @@ const JourneyPage = ({ params }: RouteParams) => {
           >
             <PlusIcon width={24} height={24} className="cursor-pointer" />
           </Link>
+          {!isOwner && (
+            <BookmarkIcon
+              width={24}
+              height={24}
+              className={cn(
+                "cursor-pointer",
+                isFavorite && "text-amber-400 fill-amber-400"
+              )}
+              onClick={async () => await mutation.mutateAsync(journey.id)}
+            />
+          )}
           <Share2Icon
-            width={24}
-            height={24}
+            width={22}
+            height={22}
             className="cursor-pointer"
             onClick={() => setShowModal(!showModal)}
           />

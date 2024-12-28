@@ -45,7 +45,12 @@ const ExplorePage = () => {
     setPage((prevPage) => prevPage + 1);
   };
 
-  if (isLoading) return <Loader />;
+  if (isLoading)
+    return (
+      <div className="p-8">
+        <Loader />
+      </div>
+    );
   if (error)
     return (
       <div>Error fetching journeys data. Please refresh and try again.</div>
