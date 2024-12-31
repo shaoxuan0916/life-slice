@@ -34,22 +34,22 @@ const Sidebar = () => {
     {
       name: "Explore",
       pathname: "/",
-      icon: <SearchIcon width={16} height={16} />,
+      icon: <SearchIcon width={20} height={20} />,
     },
     {
       name: "Journeys",
       pathname: "/journeys",
-      icon: <RouteIcon width={16} height={16} />,
+      icon: <RouteIcon width={20} height={20} />,
     },
     {
       name: "Profile",
       pathname: "/profile",
-      icon: <UserIcon width={16} height={16} />,
+      icon: <UserIcon width={20} height={20} />,
     },
     {
       name: "Settings",
       pathname: "/settings",
-      icon: <Settings width={16} height={16} />,
+      icon: <Settings width={20} height={20} />,
     },
   ];
 
@@ -57,7 +57,7 @@ const Sidebar = () => {
     <div className="flex flex-col w-[200px] h-screen py-8 px-4 bg-background">
       <div className="flex items-center justify-between mb-6">
         <Link href="/journeys">
-          <h1 className="pl-2 text-xl font-bricolage font-semibold">
+          <h1 className="pl-2 text-2xl font-bricolage font-semibold">
             Life Slice
           </h1>
         </Link>
@@ -76,7 +76,7 @@ const Sidebar = () => {
               )}
             >
               {link.icon as string}
-              <p className="text-[14px] leading-4">{link.name}</p>
+              <p className="text-[16px] leading-6">{link.name}</p>
             </div>
           </Link>
         ))}
@@ -94,8 +94,8 @@ const Sidebar = () => {
             router.push("/login");
           }}
         >
-          <LogOutIcon width={16} height={16} />
-          <p className="text-[14px] leading-4">{user ? "Logout" : "Login"}</p>
+          <LogOutIcon width={20} height={20} />
+          <p className="text-[16px] leading-6">{user ? "Logout" : "Login"}</p>
         </div>
       </div>
     </div>
