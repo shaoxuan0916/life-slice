@@ -17,7 +17,12 @@ export function ModeToggle({ showLabel = false }: { showLabel?: boolean }) {
 
   return (
     <div className="flex items-center justify-between">
-      <p className={cn("hidden", showLabel && "block text-primary")}>
+      <p
+        className={cn(
+          "hidden",
+          showLabel && "block text-primary text-[14px] leading-4"
+        )}
+      >
         Dark mode
       </p>
       <Switch
