@@ -90,7 +90,7 @@ const JourneyPage = ({ params }: RouteParams) => {
           </Badge>
           <div className="flex items-center gap-4 mb-4">
             <div className="hidden md:flex">
-              <BackButton />
+              <BackButton link="/journeys" />
             </div>
             <h2 className="text-xl md:text-2xl text-black font-bricolage dark:text-white line-clamp-2 md:line-clamp-1">
               {journey.name}
