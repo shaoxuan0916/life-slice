@@ -1,6 +1,5 @@
 import errorHandler from "../error.handler";
 import { createClient } from "../supabase/client";
-import { fetchUser } from "./user";
 
 const supabase = createClient();
 
@@ -36,15 +35,7 @@ export const fetchPublicJourneys = async (
   return journeys;
 };
 
-export const fetchUserJourneys = async () => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const userId = user?.id;
-
-  if (!userId) throw new Error("No logged in user.");
-
+export const fetchUserJourneys = async (userId: string) => {
   const { data: journeys, error } = await supabase
     .from("journeys")
     .select("*")
@@ -84,12 +75,13 @@ export const createJourney = async (
 
   if (!userId) throw new Error("No logged in user.");
 
-  const userData = await fetchUser();
-  const userJourneys = await fetchUserJourneys();
+  // TODO: uncomment this if we want to limit the number of journeys a free user can create
+  // const userData = await fetchUser();
+  // const userJourneys = await fetchUserJourneys();
 
-  if (userJourneys.length >= 3 && !userData[0].is_pro) {
-    throw new Error("Upgrade to premium to create more than 3 journeys.");
-  }
+  // if (userJourneys.length >= 3 && !userData[0].is_pro) {
+  //   throw new Error("Upgrade to premium to create more than 3 journeys.");
+  // }
 
   const { data, error } = await supabase
     .from("journeys")
@@ -139,6 +131,7 @@ export const editJourneyById = async (
     .select();
 
   if (error) {
+    console.log("error", error);
     throw new Error(errorHandler(error));
   }
 

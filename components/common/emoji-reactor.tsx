@@ -1,18 +1,14 @@
 "use client";
 
-import {
-  handleSliceReaction,
-  fetchSliceReactions,
-} from "@/lib/api/slice-reaction";
 import { sleep } from "@/lib/functions";
 import { cn } from "@/lib/utils";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMemo, useState } from "react";
-import { toast } from "@/hooks/use-toast";
-import errorHandler from "@/lib/error.handler";
-import { useAuth } from "@/lib/supabase/provider";
 import { Skeleton } from "../ui/skeleton";
+import {
+  useFetchSliceReactions,
+  useHandleSliceReaction,
+} from "@/hooks/reaction.hook";
 
 export const EmojiReactor = ({
   sliceId,
@@ -21,12 +17,7 @@ export const EmojiReactor = ({
   className?: string;
   sliceId: string;
 }) => {
-  const { user } = useAuth();
-  const { data, isLoading } = useQuery({
-    queryKey: ["slice-reactions", sliceId],
-    queryFn: () => fetchSliceReactions(sliceId, user?.id || ""),
-    enabled: !!sliceId,
-  });
+  const { data, isLoading } = useFetchSliceReactions(sliceId);
 
   const items = [
     {
@@ -109,31 +100,14 @@ function IconContainer({
     };
   };
 }) {
-  const queryClient = useQueryClient();
   const [hovered, setHovered] = useState(false);
 
   const reactionState = useMemo(() => {
     return data?.[type] || { count: 0, isReacted: false };
   }, [data, type]);
 
-  const mutation = useMutation({
-    mutationFn: ({ type, emoji }: { type: string; emoji: string }) => {
-      return handleSliceReaction(sliceId, type, emoji);
-    },
-    async onSuccess() {
-      queryClient.invalidateQueries({
-        queryKey: ["slice-reactions", sliceId],
-        refetchType: "active",
-      });
-    },
-    onError(error) {
-      toast({
-        title: "Error",
-        description: errorHandler(error),
-        variant: "destructive",
-      });
-    },
-  });
+  const mutation = useHandleSliceReaction(sliceId);
+
   return (
     <div
       className="cursor-pointer"

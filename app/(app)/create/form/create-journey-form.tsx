@@ -17,19 +17,17 @@ import {
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import errorHandler from "@/lib/error.handler";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/utils/use-toast";
 import { ArrowUpFromLine, PlusIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import useUploadImage from "@/hooks/use-upload-image";
+import useUploadImage from "@/hooks/utils/use-upload-image";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/lib/supabase/provider";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
-import { createJourney } from "@/lib/api/journey";
 import { BackButton } from "@/components/common/back-button";
 import { Switch } from "@/components/ui/switch";
 import { Loader } from "@/components/common/loader";
-import { useMutation } from "@tanstack/react-query";
+import { useCreateJourney } from "@/hooks/journey.hook";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "At least 3 characters" }),
@@ -42,13 +40,14 @@ type FormSchema = z.infer<typeof formSchema>;
 
 export default function CreateJourneyForm() {
   const router = useRouter();
-  const { user } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const {
     handleFileInputChange,
     loading: uploadingImage,
     value: uploadedImageUrl,
   } = useUploadImage();
+
+  const mutation = useCreateJourney();
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -58,39 +57,22 @@ export default function CreateJourneyForm() {
   });
   const { setValue, watch } = form;
 
-  const mutation = useMutation({
-    mutationFn: (body: FormSchema) => {
-      return createJourney(
-        body.name,
-        body.description,
-        body.coverImgUrl,
-        body.isPublic
-      );
-    },
-    async onSuccess(data) {
-      toast({
-        description: "New journey created!",
-      });
-      router.push(`/journeys/${data[0].id}`);
-    },
-    onError(error) {
-      toast({ description: errorHandler(error), variant: "destructive" });
-    },
-  });
-
   useEffect(() => {
     if (uploadedImageUrl) {
       setValue("coverImgUrl", uploadedImageUrl);
     }
   }, [uploadedImageUrl, setValue]);
 
-  // 2. Define a submit handler.
   const onSubmit = async (data: FormSchema) => {
     setLoading(true);
     try {
-      const userId = user?.id;
-      if (!userId) throw new Error("No logged in user.");
-      await mutation.mutateAsync(data);
+      const updatedData = {
+        name: data.name,
+        description: data.description,
+        cover_img_url: data.coverImgUrl,
+        is_public: data.isPublic,
+      };
+      await mutation.mutateAsync(updatedData);
     } catch (error: unknown) {
       toast({ description: errorHandler(error), variant: "destructive" });
     } finally {

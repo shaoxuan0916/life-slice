@@ -19,7 +19,7 @@ const SuccessSubscription = () => {
         <p>✅ Lifetime Access</p>
       </div>
       <p className="text-center text-neutral-600 dark:text-neutral-300">
-        Welcome to the full LifeSlice experience – where your life’s moments
+        Welcome to the full LifeSlice experience, where your life&apos;s moments
         have no limits!
       </p>
       <Link href="/settings/my-plan" className="mx-auto">

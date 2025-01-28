@@ -15,11 +15,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import errorHandler from "@/lib/error.handler";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/utils/use-toast";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { editUser } from "@/lib/api/user";
+import { useEditUser } from "@/hooks/user.hook";
 
 const formSchema = z.object({
   fullName: z.string().min(3, { message: "At least 3 characters" }),
@@ -34,7 +33,6 @@ interface EditUserFormProps {
 
 export default function EditProfileForm({ user }: EditUserFormProps) {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const [loading, setLoading] = useState<boolean>(false);
 
   const form = useForm<FormSchema>({
@@ -45,30 +43,16 @@ export default function EditProfileForm({ user }: EditUserFormProps) {
     },
   });
 
-  const mutation = useMutation({
-    mutationFn: (body: FormSchema) => {
-      return editUser(body.fullName, body.username);
-    },
-    async onSuccess() {
-      queryClient.invalidateQueries({
-        queryKey: ["user"],
-        refetchType: "active",
-      });
-      toast({
-        description: "User updated!",
-      });
-      router.push("/profile");
-    },
-    onError(error) {
-      toast({ description: errorHandler(error), variant: "destructive" });
-    },
-  });
+  const mutation = useEditUser();
 
-  // 2. Define a submit handler.
   const onSubmit = async (data: FormSchema) => {
     setLoading(true);
     try {
-      await mutation.mutateAsync(data);
+      const updatedData = {
+        full_name: data.fullName,
+        username: data.username,
+      };
+      await mutation.mutateAsync(updatedData);
     } catch (error: unknown) {
       toast({ description: errorHandler(error), variant: "destructive" });
     } finally {

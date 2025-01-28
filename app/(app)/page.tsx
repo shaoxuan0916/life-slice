@@ -1,8 +1,6 @@
 "use client";
 
 import { Loader } from "@/components/common/loader";
-import { fetchPublicJourneys } from "@/lib/api/journey";
-import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import JourneyCard from "./journeys/partials/journey-card";
@@ -10,6 +8,7 @@ import Input from "@/components/common/input";
 import { SearchIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useFetchPublicJourneys } from "@/hooks/journey.hook";
 
 const ExplorePage = () => {
   const [journeyList, setJourneyList] = useState<
@@ -27,11 +26,7 @@ const ExplorePage = () => {
     isLoading,
     isFetching,
     isSuccess,
-  } = useQuery<(Journey & { users: UserInfo })[]>({
-    queryKey: ["explore", "journeys", searchQuery, page],
-    queryFn: () =>
-      fetchPublicJourneys(searchQuery, page * limit, (page + 1) * limit - 1),
-  });
+  } = useFetchPublicJourneys(searchQuery, page, limit);
 
   useEffect(() => {
     if (journeys && page === 0) {
@@ -58,7 +53,6 @@ const ExplorePage = () => {
 
   return (
     // TODO: Infinite scroll down & enhance UI
-    // TODO: Fix search in chinese
     <div className="w-full h-full flex flex-col pt-8 md:pt-0 pb-16">
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-bricolage font-semibold">Explore</h3>

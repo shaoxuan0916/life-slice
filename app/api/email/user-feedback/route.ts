@@ -1,4 +1,4 @@
-import UserFeedbackEmail from "@/components/emails/UserFeedback";
+import UserFeedbackEmail from "@/components/emails/user-feedback";
 import { NextRequest } from "next/server";
 import { Resend } from "resend";
 

@@ -53,6 +53,38 @@ export async function GET(req: NextRequest) {
       //     console.log("New user inserted successfully");
       //   }
       // }
+
+      // Now already switch to supabase trigger functions for better performance
+      //   declare
+      //   random_username text;
+      //   begin
+      //   -- Generate a random 8-character alphanumeric string
+      //   random_username := substring(md5(random()::text), 1, 8);
+
+      //   insert into public.users (
+      //     id,
+      //     user_id,
+      //     email,
+      //     full_name,
+      //     username,
+      //     is_pro,
+      //     is_verified,
+      //     created_at,
+      //     updated_at
+      //   )
+      //   values (
+      //     new.id,
+      //     new.id,  -- assuming `user_id` is the same as `id`
+      //     new.email,
+      //     null,
+      //     random_username,
+      //     true,  -- default value for is_pro
+      //     true,  -- default value for is_verified
+      //     now(),  -- sets created_at to current timestamp
+      //     now()   -- sets updated_at to current timestamp
+      //   );
+      //   return new;
+      // end;
     }
   });
 

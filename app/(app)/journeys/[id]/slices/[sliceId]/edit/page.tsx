@@ -1,12 +1,11 @@
 "use client";
 
-import { fetchSliceById } from "@/lib/api/slice";
-import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import React from "react";
 import EditSliceForm from "./form";
 import SlicePageHeader from "../partials/slice-page-header";
 import { Loader } from "@/components/common/loader";
+import { useFetchSliceById } from "@/hooks/slice.hook";
 
 const EditSlicePage = () => {
   const { id: journeyId, sliceId } = useParams();
@@ -15,11 +14,7 @@ const EditSlicePage = () => {
     data: slice,
     error,
     isLoading,
-  } = useQuery<Slice>({
-    queryKey: ["slices", sliceId],
-    queryFn: () => fetchSliceById(sliceId as string),
-    enabled: !!journeyId || !!sliceId,
-  });
+  } = useFetchSliceById(journeyId as string, sliceId as string);
 
   if (isLoading)
     return (

@@ -1,7 +1,7 @@
 import { BackButton } from "@/components/common/back-button";
 import ConfirmModal from "@/components/common/confirm-modal";
 import MorePopover from "@/components/common/more-popover";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/utils/use-toast";
 import { deleteSliceById } from "@/lib/api/slice";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";

@@ -1,12 +1,11 @@
 "use client";
 
-import { fetchJourneyById } from "@/lib/api/journey";
-import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import EditJourneyForm from "./form";
 import JourneyPageHeader from "../partials/journey-page-header";
 import { Loader } from "@/components/common/loader";
 import { useAuth } from "@/lib/supabase/provider";
+import { useFetchJourneyById } from "@/hooks/journey.hook";
 
 interface RouteParams {
   params: {
@@ -17,15 +16,7 @@ interface RouteParams {
 const EditJourneyPage = ({ params }: RouteParams) => {
   const journeyId = params.id;
   const { user } = useAuth();
-  const {
-    data: journey,
-    error,
-    isLoading,
-  } = useQuery<Journey>({
-    queryKey: ["journeys", journeyId],
-    queryFn: () => fetchJourneyById(journeyId),
-    enabled: !!journeyId,
-  });
+  const { data: journey, error, isLoading } = useFetchJourneyById(journeyId);
 
   const isOwner = user?.id === journey?.user_id;
 

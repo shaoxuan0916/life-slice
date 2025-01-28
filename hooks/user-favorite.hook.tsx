@@ -5,7 +5,7 @@ import {
 } from "@/lib/api/user_favorite";
 import { useAuth } from "@/lib/supabase/provider";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "./use-toast";
+import { toast } from "./utils/use-toast";
 import errorHandler from "@/lib/error.handler";
 
 export const useCheckIsJourneyFavorite = (journeyId: string) => {

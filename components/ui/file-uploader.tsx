@@ -1,6 +1,6 @@
 "use client";
 
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/utils/use-toast";
 import { cn } from "@/lib/utils";
 import { Trash2 as RemoveIcon } from "lucide-react";
 import {

@@ -16,18 +16,18 @@ import {
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import errorHandler from "@/lib/error.handler";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/utils/use-toast";
 import { ArrowUpFromLine, CropIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
-import { deleteSliceById, editSliceById } from "@/lib/api/slice";
+import { deleteSliceById } from "@/lib/api/slice";
 import DatePicker from "@/components/common/datepicker";
-import useUploadImages from "@/hooks/use-upload-images";
+import useUploadImages from "@/hooks/utils/use-upload-images";
 import ConfirmModal from "@/components/common/confirm-modal";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import ImageCropper from "@/app/(app)/create/form/partials/image-cropper";
+import { useEditSlice } from "@/hooks/slice.hook";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "At least 3 characters" }),
@@ -48,25 +48,21 @@ export default function EditSliceForm({
   journeyId,
 }: EditSliceFormProps) {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const [loading, setLoading] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
-
-  // Upload images to supabase storage
-  const { handleUploadImages, loading: uploadingImages } = useUploadImages();
-
   // Store images in local state
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
-
   // Image cropper
   const [imageToCrop, setImageToCrop] = useState<string | undefined>(undefined);
   const [imageToCropIndex, setImageToCropIndex] = useState<number | undefined>(
     undefined
   );
   const [croppedImage, setCroppedImage] = useState<File | undefined>(undefined);
-
   const [isUploadedNewImages, setIsUploadedNewImages] =
     useState<boolean>(false);
+
+  // Upload images to supabase storage
+  const { handleUploadImages, loading: uploadingImages } = useUploadImages();
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -78,32 +74,8 @@ export default function EditSliceForm({
     },
   });
 
-  const mutation = useMutation({
-    mutationFn: (body: FormSchema) => {
-      return editSliceById(
-        slice.id,
-        body.name,
-        body.description,
-        body.imgUrls,
-        body.sliceDate
-      );
-    },
-    async onSuccess() {
-      queryClient.invalidateQueries({
-        queryKey: ["slices", slice.id],
-        refetchType: "active",
-      });
-      toast({
-        description: "Slice updated!",
-      });
-      router.push(`/journeys/${journeyId}`);
-    },
-    onError(error) {
-      toast({ description: errorHandler(error), variant: "destructive" });
-    },
-  });
+  const mutation = useEditSlice(journeyId, slice.id);
 
-  // 2. Define a submit handler.
   const onSubmit = async (data: FormSchema) => {
     setLoading(true);
     try {
@@ -111,7 +83,13 @@ export default function EditSliceForm({
       if (isUploadedNewImages) {
         imageUrls = await handleUploadImages(uploadedImages);
       }
-      await mutation.mutateAsync({ ...data, imgUrls: imageUrls || [] });
+      const updatedData = {
+        name: data.name,
+        description: data.description,
+        img_urls: imageUrls || [],
+        slice_date: data.sliceDate,
+      };
+      await mutation.mutateAsync(updatedData);
     } catch (error: unknown) {
       toast({ description: errorHandler(error), variant: "destructive" });
     } finally {

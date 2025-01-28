@@ -1,12 +1,9 @@
 "use client";
 
-import { fetchJourneyById } from "@/lib/api/journey";
-import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import JourneyPageHeader from "./partials/journey-page-header";
 import { Timeline } from "@/components/ui/timeline";
 import { BookmarkIcon, PlusIcon, Share2Icon } from "lucide-react";
-import { fetchJourneySlices } from "@/lib/api/slice";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -20,6 +17,8 @@ import {
   useCheckIsJourneyFavorite,
   useHandleUserFavorite,
 } from "@/hooks/user-favorite.hook";
+import { useFetchJourneyById } from "@/hooks/journey.hook";
+import { useFetchSlicesByJourneyId } from "@/hooks/slice.hook";
 
 interface RouteParams {
   params: {
@@ -37,21 +36,13 @@ const JourneyPage = ({ params }: RouteParams) => {
     data: journey,
     error: errorJourney,
     isLoading: isLoadingJourney,
-  } = useQuery<Journey>({
-    queryKey: ["journeys", journeyId],
-    queryFn: () => fetchJourneyById(journeyId),
-    enabled: !!journeyId,
-  });
+  } = useFetchJourneyById(journeyId);
 
   const {
     data: slices,
     error: errorSlices,
     isLoading: isLoadingSlices,
-  } = useQuery<Slice[]>({
-    queryKey: ["slices"],
-    queryFn: () => fetchJourneySlices(journeyId),
-    enabled: !!journeyId,
-  });
+  } = useFetchSlicesByJourneyId(journeyId);
 
   const { data: isFavorite } = useCheckIsJourneyFavorite(journeyId);
 
@@ -77,12 +68,10 @@ const JourneyPage = ({ params }: RouteParams) => {
         isFavorite={isFavorite}
         mutation={mutation}
       />
-
       <ModalShareLink
         open={showModal}
         onOpenChange={() => setShowModal(false)}
       />
-
       <div className="flex items-center justify-between gap-8 py-8 px-4 md:px-8 lg:px-10 max-w-[1200px]">
         <div className="flex flex-col">
           <Badge variant="outline" className="w-fit mb-4 md:hidden">
@@ -90,7 +79,7 @@ const JourneyPage = ({ params }: RouteParams) => {
           </Badge>
           <div className="flex items-center gap-4 mb-4">
             <div className="hidden md:flex">
-              <BackButton link="/journeys" />
+              <BackButton link={isOwner ? "/journeys" : "/"} />
             </div>
             <h2 className="text-xl md:text-2xl text-black font-bricolage dark:text-white line-clamp-2 md:line-clamp-1">
               {journey.name}
@@ -103,7 +92,6 @@ const JourneyPage = ({ params }: RouteParams) => {
             {journey.description}
           </p>
         </div>
-
         <div className={cn("hidden md:flex items-center gap-8")}>
           <Link
             href={`/create?type=slice&journeyId=${journey.id}&title=${journey.name}`}

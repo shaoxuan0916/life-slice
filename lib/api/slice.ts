@@ -16,11 +16,11 @@ export const fetchJourneySlices = async (journeyId: string) => {
   return slices;
 };
 
-export const fetchSliceById = async (id: string) => {
+export const fetchSliceById = async (sliceId: string) => {
   const { data: slice, error } = await supabase
     .from("slices")
     .select("*")
-    .eq("id", id)
+    .eq("id", sliceId)
     .single();
 
   if (error) {
@@ -44,11 +44,12 @@ export const createSlice = async (
 
   if (!userId) throw new Error("No logged in user.");
 
-  const journeySlices = await fetchJourneySlices(journeyId);
+  // Uncomment this when we want to limit the number of slices in a journey
+  // const journeySlices = await fetchJourneySlices(journeyId);
 
-  if(journeySlices.length >= 30) {
-    throw new Error("Upgrade to premium to have more that 30 slices in a journey.");
-  }
+  // if(journeySlices.length >= 30) {
+  //   throw new Error("Upgrade to premium to have more that 30 slices in a journey.");
+  // }
 
   const { data, error } = await supabase
     .from("slices")

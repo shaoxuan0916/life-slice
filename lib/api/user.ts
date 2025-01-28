@@ -15,15 +15,7 @@ export const fetchUsers = async () => {
   return users;
 };
 
-export const fetchUser = async () => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const userId = user?.id;
-
-  if (!userId) throw new Error("No logged in user.");
-
+export const fetchUser = async (userId: string) => {
   const { data: userData, error } = await supabase
     .from("users")
     .select("*")
@@ -57,6 +49,5 @@ export const editUser = async (fullName: string, username: string) => {
   if (error) {
     throw new Error(errorHandler(error));
   }
-
   return data;
 };

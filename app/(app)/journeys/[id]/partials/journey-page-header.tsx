@@ -1,7 +1,7 @@
 import { BackButton } from "@/components/common/back-button";
 import ConfirmModal from "@/components/common/confirm-modal";
 import MorePopover from "@/components/common/more-popover";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/utils/use-toast";
 import { deleteJourneyById } from "@/lib/api/journey";
 import { cn } from "@/lib/utils";
 import { BookmarkIcon, PlusIcon, Share2Icon } from "lucide-react";
@@ -30,12 +30,15 @@ const JourneyPageHeader = ({
   const [showModal, setShowModal] = useState<boolean>(false);
   const [showCopyModal, setShowCopyModal] = useState<boolean>(false);
 
+  const backLink = isEdit
+    ? `/journeys/${journey.id}`
+    : isOwner
+    ? "/journeys"
+    : "/";
+
   return (
     <div className="sticky top-0 left-0 right-0 flex items-center justify-between gap-4 bg-background z-50 py-4 md:hidden">
-      <BackButton
-        showText
-        link={isEdit ? `/journeys/${journey.id}` : "/journeys"}
-      />
+      <BackButton showText link={backLink} />
       <ModalShareLink
         open={showCopyModal}
         onOpenChange={() => setShowCopyModal(false)}

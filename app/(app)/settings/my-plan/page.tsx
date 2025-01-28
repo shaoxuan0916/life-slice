@@ -2,33 +2,30 @@
 
 import React from "react";
 import SubscriptionPlan from "./partials/subscription";
-import { fetchUserSubsriptionPlan } from "@/lib/api/subscription";
-import { useQuery } from "@tanstack/react-query";
-import { ArrowDown, CheckCircleIcon, Loader } from "lucide-react";
+import { ArrowDown, CheckCircleIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { useFetchUser } from "@/hooks/user.hook";
+import { Loader } from "@/components/common/loader";
+// import { useFetchSubscription } from "@/hooks/subscription.hook";
 
 const MyPlan = () => {
-  const {
-    data: subscription,
-    error,
-    isLoading,
-  } = useQuery<Subscription[]>({
-    queryKey: ["subscriptions"],
-    queryFn: () => fetchUserSubsriptionPlan(),
-  });
-
+  const { data: user, isLoading } = useFetchUser();
   if (isLoading)
     return (
       <div className="p-8">
         <Loader />
       </div>
     );
-  if (error) return <div>Error fetching user subsription plan.</div>;
-  if (!subscription)
-    return <div className="w-full h-full flex flex-col">Data not found =(</div>;
+  if (!user) return <div>User not found =(</div>;
 
-  const isPro = subscription[0]?.is_pro;
+  const isPro = user[0].is_pro;
+
+  // const { data: subscription, error, isLoading } = useFetchSubscription();
+  // if (error) return <div>Error fetching user subsription plan.</div>;
+  // if (!subscription)
+  //   return <div className="w-full h-full flex flex-col">Data not found =(</div>;
+  // const isPro = subscription[0]?.is_pro;
 
   return (
     <div className="w-full h-full flex flex-col pt-8 md:pt-0 pb-24">

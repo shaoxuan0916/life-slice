@@ -1,6 +1,6 @@
 "use client";
 
-import Sidebar from "@/components/layout/Sidebar";
+import Sidebar from "@/components/layout/sidebar";
 import BottomNav from "@/components/layout/bottom-nav";
 // import { FloatingDock } from "@/components/layout/floating-dock";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ import React, { ReactNode } from "react";
 const AppLayout = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
 
+  // Uncomment this if you want to show the floating dock
   // const hideFloatingDock =
   //   pathname.startsWith("/journeys/") ||
   //   pathname.includes("edit") ||
@@ -22,6 +23,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
 
   return (
     <div className="flex flex-col min-h-screen mx-auto">
+      {/* Uncomment this if you want to show the floating dock */}
       {/* {!hideFloatingDock && <FloatingDock />} */}
 
       <div className={cn("flex md:gap-4 min-h-screen")}>

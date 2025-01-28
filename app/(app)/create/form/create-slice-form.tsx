@@ -16,19 +16,17 @@ import {
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import errorHandler from "@/lib/error.handler";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/utils/use-toast";
 import { ArrowUpFromLine, CropIcon, PlusIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/lib/supabase/provider";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { BackButton } from "@/components/common/back-button";
-import { createSlice } from "@/lib/api/slice";
 import DatePicker from "@/components/common/datepicker";
-import useUploadImages from "@/hooks/use-upload-images";
-import { useMutation } from "@tanstack/react-query";
+import useUploadImages from "@/hooks/utils/use-upload-images";
 import ImageCropper from "./partials/image-cropper";
+import { useCreateSlice } from "@/hooks/slice.hook";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "At least 3 characters" }),
@@ -41,16 +39,10 @@ type FormSchema = z.infer<typeof formSchema>;
 
 export default function CreateSliceForm() {
   const router = useRouter();
-  const { user } = useAuth();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState<boolean>(false);
-
-  // Upload images to supabase storage
-  const { handleUploadImages, loading: uploadingImages } = useUploadImages();
-
   // Store images in local state
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
-
   // Image cropper
   const [imageToCrop, setImageToCrop] = useState<string | undefined>(undefined);
   const [imageToCropIndex, setImageToCropIndex] = useState<number | undefined>(
@@ -58,8 +50,13 @@ export default function CreateSliceForm() {
   );
   const [croppedImage, setCroppedImage] = useState<File | undefined>(undefined);
 
+  // Upload images to supabase storage
+  const { handleUploadImages, loading: uploadingImages } = useUploadImages();
+
   const journeyId = searchParams.get("journeyId") as string;
   const title = searchParams.get("title") as string;
+
+  const mutation = useCreateSlice();
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -71,35 +68,18 @@ export default function CreateSliceForm() {
     },
   });
 
-  const mutation = useMutation({
-    mutationFn: async (body: FormSchema) => {
-      return createSlice(
-        journeyId,
-        body.name,
-        body.description,
-        body.imgUrls,
-        body.sliceDate
-      );
-    },
-    async onSuccess() {
-      toast({
-        description: "New slice created!",
-      });
-      router.push(`/journeys/${journeyId}`);
-    },
-    onError(error) {
-      toast({ description: errorHandler(error), variant: "destructive" });
-    },
-  });
-
-  // 2. Define a submit handler.
   const onSubmit = async (data: FormSchema) => {
     setLoading(true);
     try {
-      const userId = user?.id;
-      if (!userId) throw new Error("No logged in user.");
       const imageUrls = await handleUploadImages(uploadedImages);
-      await mutation.mutateAsync({ ...data, imgUrls: imageUrls || [] });
+      const updatedData = {
+        journey_id: journeyId,
+        name: data.name,
+        description: data.description,
+        img_urls: imageUrls || [],
+        slice_date: data.sliceDate,
+      };
+      await mutation.mutateAsync(updatedData);
     } catch (error: unknown) {
       toast({ description: errorHandler(error), variant: "destructive" });
     } finally {

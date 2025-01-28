@@ -3,7 +3,7 @@
 import React from "react";
 import { useCopyToClipboard } from "usehooks-ts";
 import { BaseModal } from "@/components/common/base-modal";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/utils/use-toast";
 import { usePathname } from "next/navigation";
 import Input from "@/components/common/input";
 import { Button } from "@/components/ui/button";

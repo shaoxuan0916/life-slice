@@ -1,20 +1,12 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { Loader } from "@/components/common/loader";
-import { fetchUser } from "@/lib/api/user";
 import EditProfileForm from "./form";
+import { useFetchUser } from "@/hooks/user.hook";
 
 const EditProfilePage = () => {
-  const {
-    data: user,
-    error,
-    isLoading,
-  } = useQuery<UserInfo[]>({
-    queryKey: ["user"],
-    queryFn: () => fetchUser(),
-  });
+  const { data: user, error, isLoading } = useFetchUser();
 
   if (isLoading)
     return (

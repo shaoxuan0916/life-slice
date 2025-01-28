@@ -9,7 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/utils/use-toast";
 import errorHandler from "@/lib/error.handler";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
@@ -26,6 +26,7 @@ const formSchema = z.object({
 });
 
 type FormSchema = z.infer<typeof formSchema>;
+
 const SupportPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const form = useForm<FormSchema>({

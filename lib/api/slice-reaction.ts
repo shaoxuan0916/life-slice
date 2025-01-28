@@ -3,7 +3,13 @@ import { createClient } from "../supabase/client";
 
 const supabase = createClient();
 
-export const fetchSliceReactions = async (sliceId: string, userId: string) => {
+export const fetchSliceReactions = async (sliceId: string) => {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const userId = user?.id;
+
   const { data: reactions, error } = await supabase
     .from("slice_reactions")
     .select("*")

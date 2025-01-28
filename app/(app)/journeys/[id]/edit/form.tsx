@@ -17,18 +17,18 @@ import {
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import errorHandler from "@/lib/error.handler";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/utils/use-toast";
 import { ArrowUpFromLine } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import useUploadImage from "@/hooks/use-upload-image";
+import useUploadImage from "@/hooks/utils/use-upload-image";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import ConfirmModal from "@/components/common/confirm-modal";
-import { deleteJourneyById, editJourneyById } from "@/lib/api/journey";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteJourneyById } from "@/lib/api/journey";
 import { Switch } from "@/components/ui/switch";
 import { Loader } from "@/components/common/loader";
+import { useEditJourneyById } from "@/hooks/journey.hook";
 
 const formSchema = z.object({
   name: z.string().min(3, { message: "At least 3 characters" }),
@@ -45,7 +45,6 @@ interface EditJourneyFormProps {
 
 export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const [loading, setLoading] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const {
@@ -53,6 +52,8 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
     loading: uploadingImage,
     value: uploadedImageUrl,
   } = useUploadImage();
+
+  const mutation = useEditJourneyById(journey.id);
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -65,42 +66,22 @@ export default function EditJourneyForm({ journey }: EditJourneyFormProps) {
   });
   const { setValue, watch } = form;
 
-  const mutation = useMutation({
-    mutationFn: (body: FormSchema) => {
-      return editJourneyById(
-        journey.id,
-        body.name,
-        body.description,
-        body.coverImgUrl,
-        body.isPublic
-      );
-    },
-    async onSuccess(data) {
-      queryClient.invalidateQueries({
-        queryKey: ["journeys", journey.id],
-        refetchType: "active",
-      });
-      toast({
-        description: "Journey updated!",
-      });
-      router.push(`/journeys/${data[0].id}`);
-    },
-    onError(error) {
-      toast({ description: errorHandler(error), variant: "destructive" });
-    },
-  });
-
   useEffect(() => {
     if (uploadedImageUrl) {
       setValue("coverImgUrl", uploadedImageUrl);
     }
   }, [uploadedImageUrl, setValue]);
 
-  // 2. Define a submit handler.
   const onSubmit = async (data: FormSchema) => {
     setLoading(true);
     try {
-      await mutation.mutateAsync(data);
+      const updatedData = {
+        name: data.name,
+        description: data.description,
+        cover_img_url: data.coverImgUrl,
+        is_public: data.isPublic,
+      };
+      await mutation.mutateAsync(updatedData);
     } catch (error: unknown) {
       toast({ description: errorHandler(error), variant: "destructive" });
     } finally {

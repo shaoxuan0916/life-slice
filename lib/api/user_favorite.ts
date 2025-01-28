@@ -26,7 +26,6 @@ export const checkIsJourneyFavorite = async (journeyId: string) => {
 };
 
 export const fetchUserFavoriteJourneys = async (userId?: string) => {
-  if (!userId) throw new Error("No logged in user.");
   const { data: favorites, error } = await supabase
     .from("user_favorites")
     .select("*")

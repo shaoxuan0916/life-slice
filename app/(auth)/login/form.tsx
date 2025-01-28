@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import errorHandler from "@/lib/error.handler";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/utils/use-toast";
 import { otpLogin, socialLogin } from "@/lib/api/auth";
 import { SendHorizonalIcon } from "lucide-react";
 import Link from "next/link";
@@ -36,7 +36,6 @@ export default function LoginForm() {
     },
   });
 
-  // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true);

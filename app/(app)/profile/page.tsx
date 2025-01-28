@@ -6,23 +6,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { useFetchUser } from "@/hooks/user.hook";
 import { logout } from "@/lib/api/auth";
-import { fetchUser } from "@/lib/api/user";
-import { useQuery } from "@tanstack/react-query";
 import { LogOutIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
 const ProfilePage = () => {
   const router = useRouter();
-  const {
-    data: user,
-    error,
-    isLoading,
-  } = useQuery<UserInfo[]>({
-    queryKey: ["user"],
-    queryFn: () => fetchUser(),
-  });
+  const { data: user, error, isLoading } = useFetchUser();
 
   if (isLoading)
     return (

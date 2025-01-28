@@ -2,8 +2,6 @@
 
 import React from "react";
 import JourneyCard from "./partials/journey-card";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUserJourneys } from "@/lib/api/journey";
 import Link from "next/link";
 import Image from "next/image";
 import { PlusIcon } from "lucide-react";
@@ -12,27 +10,25 @@ import { useRouter } from "next/navigation";
 import { Loader } from "@/components/common/loader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useFetchUserFavorite } from "@/hooks/user-favorite.hook";
+import { useFetchUserJourneys } from "@/hooks/journey.hook";
 
 const JourneysPage = () => {
   const router = useRouter();
+  const { data: journeys, error, isLoading } = useFetchUserJourneys();
+  // TODO: only fetch favorites when the "favorites" tab is selected
   const {
-    data: journeys,
-    error,
-    isLoading,
-  } = useQuery<(Journey & { users: UserInfo })[]>({
-    queryKey: ["journeys"],
-    queryFn: () => fetchUserJourneys(),
-  });
-  // TODO: only fetch favorites if the "favorites" tab is selected
-  const { data: favorites } = useFetchUserFavorite();
+    data: favorites,
+    isLoading: favoritesLoading,
+    error: favoritesError,
+  } = useFetchUserFavorite();
 
-  if (isLoading)
+  if (isLoading || favoritesLoading)
     return (
       <div className="p-8">
         <Loader />
       </div>
     );
-  if (error) return <div>Error fetching journeys data.</div>;
+  if (error || favoritesError) return <div>Error fetching journeys data.</div>;
   if (!journeys)
     return <div className="w-full h-full flex flex-col">Data not found =(</div>;
 
