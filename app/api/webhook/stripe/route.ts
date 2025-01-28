@@ -8,7 +8,7 @@ const stripeApiKey = `${process.env.STRIPE_SECRET_KEY}`;
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 const stripe = new Stripe(stripeApiKey, {
-  apiVersion: "2024-10-28.acacia",
+  apiVersion: "2025-01-27.acacia",
   typescript: true,
 });
 
