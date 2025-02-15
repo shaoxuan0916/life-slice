@@ -1,60 +1,46 @@
 "use client";
 
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import errorHandler from "@/lib/error.handler";
 import { toast } from "@/hooks/utils/use-toast";
-import { otpLogin, socialLogin } from "@/lib/api/auth";
-import { SendHorizonalIcon } from "lucide-react";
+import { socialLogin } from "@/lib/api/auth";
 import Link from "next/link";
 
-const formSchema = z.object({
-  email: z.string().min(1, { message: "Email is required" }).email(),
-});
+// const formSchema = z.object({
+//   email: z.string().min(1, { message: "Email is required" }).email(),
+// });
 
 export default function LoginForm() {
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [loading, setLoading] = useState<boolean>(false);
 
   // 1. Define form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-    },
-  });
+  // const form = useForm<z.infer<typeof formSchema>>({
+  //   resolver: zodResolver(formSchema),
+  //   defaultValues: {
+  //     email: "",
+  //   },
+  // });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      setLoading(true);
-      try {
-        await otpLogin(values.email);
+  // const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  //   try {
+  //     setLoading(true);
+  //     try {
+  //       await otpLogin(values.email);
 
-        toast({
-          description:
-            "Magic link has been sent to your email. Please check your inbox to log in!",
-        });
-      } catch (error) {
-        toast({ description: errorHandler(error), variant: "destructive" });
-      }
-    } catch (error: unknown) {
-      toast({ description: errorHandler(error), variant: "destructive" });
-    } finally {
-      setLoading(false);
-    }
-  };
+  //       toast({
+  //         description:
+  //           "Magic link has been sent to your email. Please check your inbox to log in!",
+  //       });
+  //     } catch (error) {
+  //       toast({ description: errorHandler(error), variant: "destructive" });
+  //     }
+  //   } catch (error: unknown) {
+  //     toast({ description: errorHandler(error), variant: "destructive" });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <div className="w-full h-screen max-w-[1000px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center px-4">
@@ -70,7 +56,7 @@ export default function LoginForm() {
           Log in / Sign up
         </h1>
 
-        <Form {...form}>
+        {/* <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
@@ -96,7 +82,7 @@ export default function LoginForm() {
               Send Magic Link
             </Button>
           </form>
-        </Form>
+        </Form> */}
 
         <Button
           className="mt-4 w-full border-primary"
