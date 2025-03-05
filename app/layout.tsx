@@ -12,15 +12,19 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout() {
   return (
     <html lang="en">
       <body className="font-dmSans">
-        <RootProvider>{children}</RootProvider>
+        <RootProvider>
+          <div className="flex flex-col items-center justify-center h-screen">
+            <h1 className="text-4xl font-bold">Hi, we&apos;re sorry!</h1>
+            <p className="text-lg text-muted-foreground">
+              We are no longer actively developing this product.
+            </p>
+          </div>
+          {/* {children} */}
+        </RootProvider>
       </body>
     </html>
   );
